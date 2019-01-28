@@ -11,11 +11,14 @@ go get github.com/tani-yu/dogleash
 ```
 
 ## SETTING
-you should ready config file.it is put on ~/.datadog/config.yaml.
-config file Content is like below.
-```
-apikey: xxxxxxx
-appkey: xxxxxxx
+Go to [DataDog API settings](https://app.datadoghq.com/account/settings#api)
+and generate an API key and application key.  Create a minimal ~/.datadog/config.yaml
+that looks like this:
+
+```yaml
+datadog:
+  api_key: YOUR_API_KEY
+  app_key: YOUR_APP_KEY
 ```
 
 ## USAGE
