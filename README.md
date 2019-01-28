@@ -11,7 +11,7 @@ go get github.com/tani-yu/dogleash
 ```
 
 ## SETTING
-you shold ready config file.it is put on ~/.datadog/config.yaml.
+you should ready config file.it is put on ~/.datadog/config.yaml.
 config file Content is like below.
 ```
 apikey: xxxxxxx
