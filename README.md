@@ -6,8 +6,10 @@ Maybe other funcion will be added.
 
 ## INSTALL
 
+To build this tool from source code, Go 1.11 is required.
+
 ```
-go get github.com/tani-yu/dogleash
+export GO111MODULE=on && go get github.com/tani-yu/dogleash
 ```
 
 ## SETTINGS
