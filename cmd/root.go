@@ -10,7 +10,6 @@ import (
 )
 
 var cfgFile string
-var profileName string
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -38,11 +37,6 @@ func init() {
 	// Cobra supports Persistent Flags, which, if defined here,
 	// will be global for your application.
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.datadog/config.yaml)")
-	RootCmd.PersistentFlags().StringVar(&profileName, "profile", "default", "使用するプロファイル名")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -60,8 +54,4 @@ func initConfig() {
 	if err != nil {             // 設定ファイルの読み取りエラー対応
 		panic(fmt.Errorf("設定ファイル読み込みエラー: %s \n", err))
 	}
-}
-
-func ProfileName() string {
-	return profileName
 }
