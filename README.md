@@ -12,8 +12,16 @@ To build this tool from source code, Go 1.11 is required.
 export GO111MODULE=on && go get github.com/tani-yu/dogleash
 ```
 
-## SETTINGS
+## SETTING
+Go to [DataDog API settings](https://app.datadoghq.com/account/settings#api)
+and generate an API key and application key.  Create a minimal ~/.datadog/config.yaml
+that looks like this:
 
+```yaml
+datadog:
+  api_key: YOUR_API_KEY
+  app_key: YOUR_APP_KEY
+```
 
 ## USAGE
 
