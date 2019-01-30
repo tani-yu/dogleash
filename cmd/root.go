@@ -2,14 +2,14 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"gopkg.in/ini.v1"
 )
 
-var cfgFile string
+var dogrcFile string
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -36,22 +36,23 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports Persistent Flags, which, if defined here,
 	// will be global for your application.
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.datadog/config.yaml)")
+	RootCmd.PersistentFlags().StringVar(&dogrcFile, "dogrc", "", ".dogrc file path (default is $HOME/.dogrc)")
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	log.Printf(cfgFile)
-	if cfgFile != "" { // enable ability to specify config file via flag
-		viper.SetConfigFile(cfgFile)
+	// reading config in default config path
+	path := os.Getenv("HOME") + "/.dogrc"
+	dogrc, err := ini.Load(path)
+	if err != nil {
+		fmt.Printf("Fail to read dogrc file: %v", err)
+		os.Exit(1)
 	}
 
-	viper.SetConfigName("config")          // name of config file (without extension)
-	viper.AddConfigPath("$HOME/.datadog/") // adding home directory as first search path
-	viper.AutomaticEnv()                   // read in environment variables that match
+	viper.SetDefault("api_key", dogrc.Section("Connection").Key("apikey").String())
+	viper.SetDefault("app_key", dogrc.Section("Connection").Key("appkey").String())
 
-	err := viper.ReadInConfig() // 設定ファイルを探索して読み取る
-	if err != nil {             // 設定ファイルの読み取りエラー対応
-		panic(fmt.Errorf("設定ファイル読み込みエラー: %s \n", err))
-	}
+	// read in environment variables that match
+	viper.SetEnvPrefix("DATADOG")
+	viper.AutomaticEnv()
 }
