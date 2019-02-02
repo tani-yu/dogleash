@@ -1,4 +1,4 @@
-// Copyright © 2017 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2019 NAME HERE <EMAIL ADDRESS>
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,22 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package dashboard
+package datadog
 
 import (
-	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"gopkg.in/zorkian/go-datadog-api.v2"
 )
 
-var imputPath string
-
-// compute_checkCmd represents the compute_check command
-var dashboardImportCmd = &cobra.Command{
-	Use:   "import",
-	Short: "json形式のファイルを読み込んでdatadogにdashboardを作成します",
-	Run: func(cmd *cobra.Command, args []string) {
-	},
-}
-
-func init() {
-	dashboardCmd.AddCommand(dashboardImportCmd)
+// NewDDClient returns the DataDog client
+func NewDDClient() (*datadog.Client, error) {
+	return datadog.NewClient(viper.GetString("api_key"), viper.GetString("app_key")), nil
 }
