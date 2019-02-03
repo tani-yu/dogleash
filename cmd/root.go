@@ -36,21 +36,24 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports Persistent Flags, which, if defined here,
 	// will be global for your application.
-	RootCmd.PersistentFlags().StringVar(&dogrcFile, "dogrc", "", ".dogrc file path (default is $HOME/.dogrc)")
+	RootCmd.PersistentFlags().StringVar(&dogrcFile, "dogrc", os.Getenv("HOME")+"/.dogrc", ".dogrc file path")
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	// reading config in default config path
-	path := os.Getenv("HOME") + "/.dogrc"
-	dogrc, err := ini.Load(path)
-	if err != nil {
-		fmt.Printf("Fail to read dogrc file: %v", err)
-		os.Exit(1)
-	}
+	// Check if a file exists
+	_, err := os.Stat(dogrcFile)
+	if err == nil {
+		// read file from dogrcFile
+		dogrc, err := ini.Load(dogrcFile)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: fail to read .dogrc file\n%v", err)
+			os.Exit(1)
+		}
 
-	viper.SetDefault("api_key", dogrc.Section("Connection").Key("apikey").String())
-	viper.SetDefault("app_key", dogrc.Section("Connection").Key("appkey").String())
+		viper.SetDefault("api_key", dogrc.Section("Connection").Key("apikey").String())
+		viper.SetDefault("app_key", dogrc.Section("Connection").Key("appkey").String())
+	}
 
 	// read in environment variables that match
 	viper.SetEnvPrefix("DATADOG")
