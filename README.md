@@ -13,15 +13,18 @@ export GO111MODULE=on && go get github.com/tani-yu/dogleash
 ```
 
 ## SETTING
-Go to [DataDog API settings](https://app.datadoghq.com/account/settings#api)
-and generate an API key and application key.  Create a minimal ~/.datadog/config.yaml
-that looks like this:
 
-```yaml
-datadog:
-  api_key: YOUR_API_KEY
-  app_key: YOUR_APP_KEY
+Go to [Datadog API settings](https://app.datadoghq.com/account/settings#api) and generate an API key and Application key.
+Create a minimal `~/.dogrc` that looks like this:
+
+```ini
+[Connection]
+apikey = YOUR_API_KEY
+appkey = YOUR_APP_KEY
 ```
+
+You can skip this step if you already use [dogshell](https://docs.datadoghq.com/developers/faq/dogshell-quickly-use-datadog-s-api-from-terminal-shell/) and have `~/.dogrc` file.
+You can also use environment variables `DATADOG_API_KEY` and `DATADOG_APP_KEY`.
 
 ## USAGE
 
