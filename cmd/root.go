@@ -30,7 +30,6 @@ func Execute() {
 	}
 }
 
-// FIXME: help サブコマンドの実行時は config 存在確認でコケたりしないよう config の読み込みをスキップしたい
 func init() {
 	cobra.OnInitialize(initConfig)
 
