@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -36,7 +37,7 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports Persistent Flags, which, if defined here,
 	// will be global for your application.
-	RootCmd.PersistentFlags().StringVar(&dogrcFile, "dogrc", os.Getenv("HOME")+"/.dogrc", ".dogrc file path")
+	RootCmd.PersistentFlags().StringVar(&dogrcFile, "config", filepath.Join(os.Getenv("HOME"), ".dogrc"), ".dogrc file path")
 }
 
 // initConfig reads in config file and ENV variables if set.
