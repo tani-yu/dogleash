@@ -25,10 +25,6 @@ var dashboardImportCmd = &cobra.Command{
 	Use:   "import",
 	Short: "json形式のファイルを読み込んでdatadogにdashboardを作成します",
 	Run: func(cmd *cobra.Command, args []string) {
-		// cli, err := auth.GetDDClient()
-		// if err != nil {
-		// log.Fatalf("fatal: %s\n", err)
-		//}
 	},
 }
 

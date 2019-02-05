@@ -21,7 +21,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/tani-yu/dogleash/cmd/auth"
+	dd "github.com/tani-yu/dogleash/datadog"
+
 	"github.com/spf13/cobra"
 )
 
@@ -32,7 +33,7 @@ var dashboardShowAllCmd = &cobra.Command{
 	Use:   "show_all",
 	Short: "すべてのdashboardをjson形式で出力します",
 	Run: func(cmd *cobra.Command, args []string) {
-		cli, err := auth.GetDDClient()
+		cli, err := dd.NewDDClient()
 		if err != nil {
 			log.Fatalf("fatal: %s\n", err)
 		}

@@ -2,15 +2,15 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"gopkg.in/ini.v1"
 )
 
-var cfgFile string
-var profileName string
+var dogrcFile string
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -30,38 +30,32 @@ func Execute() {
 	}
 }
 
-// FIXME: help サブコマンドの実行時は config 存在確認でコケたりしないよう config の読み込みをスキップしたい
 func init() {
 	cobra.OnInitialize(initConfig)
 
 	// Here you will define your flags and configuration settings.
 	// Cobra supports Persistent Flags, which, if defined here,
 	// will be global for your application.
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.datadog/config.yaml)")
-	RootCmd.PersistentFlags().StringVar(&profileName, "profile", "default", "使用するプロファイル名")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	RootCmd.PersistentFlags().StringVar(&dogrcFile, "config", filepath.Join(os.Getenv("HOME"), ".dogrc"), ".dogrc file path")
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	log.Printf(cfgFile)
-	if cfgFile != "" { // enable ability to specify config file via flag
-		viper.SetConfigFile(cfgFile)
+	// Check if a file exists
+	_, err := os.Stat(dogrcFile)
+	if err == nil {
+		// read file from dogrcFile
+		dogrc, err := ini.Load(dogrcFile)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: fail to read .dogrc file\n%v", err)
+			os.Exit(1)
+		}
+
+		viper.SetDefault("api_key", dogrc.Section("Connection").Key("apikey").String())
+		viper.SetDefault("app_key", dogrc.Section("Connection").Key("appkey").String())
 	}
 
-	viper.SetConfigName("config")          // name of config file (without extension)
-	viper.AddConfigPath("$HOME/.datadog/") // adding home directory as first search path
-	viper.AutomaticEnv()                   // read in environment variables that match
-
-	err := viper.ReadInConfig() // 設定ファイルを探索して読み取る
-	if err != nil {             // 設定ファイルの読み取りエラー対応
-		panic(fmt.Errorf("設定ファイル読み込みエラー: %s \n", err))
-	}
-}
-
-func ProfileName() string {
-	return profileName
+	// read in environment variables that match
+	viper.SetEnvPrefix("DATADOG")
+	viper.AutomaticEnv()
 }
