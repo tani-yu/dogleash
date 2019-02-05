@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	dd "github.com/tani-yu/dogleash/datadog"
 
@@ -39,29 +40,31 @@ var monitorShowAllCmd = &cobra.Command{
 
 		monit, err := cli.GetMonitors()
 		if err != nil {
-			log.Fatalf("fatal: %s\n", err)
+			log.Fatalf("Error getting all monitors: %s\n", err)
 		}
 
-		jsc, _ := json.MarshalIndent(monit, "", "  ")
+		jsc, err := json.MarshalIndent(monit, "", "  ")
+		if err != nil {
+			log.Fatalf("Error unmarshaling responded JSON object: %s\n", err)
+		}
+
 		if outputPath == "" {
 			fmt.Println(string(jsc))
-		} else {
-			os.Mkdir(outputPath+"monitor/", 0755)
-			file, err := os.Create(outputPath + "monitor/monitor.json")
-			if err != nil {
-				log.Fatalf("fatal: %s\n", err)
-			}
-			defer file.Close()
-			file.Write(jsc)
+			return
 		}
-	},
-}
 
-// VM の状態と並行ジョブの実行状態を更新する
-//
-// goroutine として呼び出される
-func checkJobStatus() {
-	return
+		baseDir := filepath.Join(outputPath, "monitor")
+		if err := os.Mkdir(baseDir, 0755); err != nil {
+			log.Fatalf("Error creating monitor datastore directory: %s\n", err)
+		}
+
+		file, err := os.Create(filepath.Join(baseDir, "monitor.json"))
+		if err != nil {
+			log.Fatalf("Error creating json file for all monitors: %s\n", err)
+		}
+		defer file.Close()
+		file.Write(jsc)
+	},
 }
 
 func init() {
