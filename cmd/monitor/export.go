@@ -16,7 +16,6 @@ package monitor
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -26,10 +25,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	targetDir string
-	all       bool
-)
+var targetDir string
 
 // monitorExportCmd represents the monitorExportCmd command
 var monitorExportCmd = &cobra.Command{
@@ -44,13 +40,6 @@ var monitorExportCmd = &cobra.Command{
 		monit, err := cli.GetMonitors()
 		if err != nil {
 			log.Fatalf("Error getting all monitors: %s\n", err)
-		}
-
-		if !all {
-			fmt.Println("not yet implemented!")
-			// implementation goes here
-
-			return
 		}
 
 		jsc, err := json.MarshalIndent(monit, "", "  ")
@@ -75,7 +64,6 @@ var monitorExportCmd = &cobra.Command{
 func init() {
 	monitorCmd.AddCommand(monitorExportCmd)
 
-	monitorExportCmd.Flags().BoolVarP(&all, "all", "a", false, "export all monitors in the account")
 	monitorExportCmd.Flags().StringVarP(&targetDir, "--target-dir", "d", "",
 		"already existing destination directory (default is current directory)")
 }

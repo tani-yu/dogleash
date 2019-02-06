@@ -16,7 +16,6 @@ package dashboard
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -27,10 +26,7 @@ import (
 	datadog "gopkg.in/zorkian/go-datadog-api.v2"
 )
 
-var (
-	targetDir string
-	all       bool
-)
+var targetDir string
 
 // dashboardExportCmd represents the dashboardExportCmd command
 var dashboardExportCmd = &cobra.Command{
@@ -67,13 +63,6 @@ func exportDashboardAsJSON(cli *datadog.Client, boards []datadog.DashboardLite, 
 	}
 
 	for _, board := range boards {
-		if !all {
-			fmt.Println("not yet implemented!")
-			// implementation goes here
-
-			return
-		}
-
 		dash, err := cli.GetDashboard(board.GetId())
 		if err != nil {
 			log.Fatalf("Error getting single dashboard: %s", err)
@@ -104,7 +93,6 @@ func toValidFileName(s string) string {
 func init() {
 	dashboardCmd.AddCommand(dashboardExportCmd)
 
-	dashboardExportCmd.Flags().BoolVarP(&all, "all", "a", false, "export all dashbords in the account")
 	dashboardExportCmd.Flags().StringVarP(&targetDir, "--target-dir", "d", "",
 		"already existing destination directory (default is current directory)")
 }
