@@ -15,15 +15,17 @@
 package dashboard
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
-	dd "github.com/tani-yu/dogleash/datadog"
-
 	"github.com/spf13/cobra"
+	dd "github.com/tani-yu/dogleash/datadog"
+	datadog "gopkg.in/zorkian/go-datadog-api.v2"
 )
 
 var outputPath string
@@ -38,33 +40,95 @@ var dashboardShowAllCmd = &cobra.Command{
 			log.Fatalf("fatal: %s\n", err)
 		}
 
-		boards, err := cli.GetDashboards()
-		if err != nil {
-			log.Fatalf("fatal: %s\n", err)
+		if outputPath == "" {
+			printDashboard(cli, "json")
+			return
 		}
-
-		for _, board := range boards {
-			dash, _ := cli.GetDashboard(*board.Id)
-			jsc, _ := json.MarshalIndent(dash, "", "  ")
-			if outputPath == "" {
-				fmt.Println(string(jsc))
-			} else {
-				os.Mkdir(outputPath+"dashboard/", 0755)
-				file, err := os.Create(outputPath + "dashboard/" + validationFileName(board.Title) + ".json")
-				if err != nil {
-					log.Fatalf("fatal: %s\n", err)
-				}
-				defer file.Close()
-				file.Write(jsc)
-			}
-		}
+		exportDashboard(cli, outputPath, "json")
 	},
 }
 
-// linuxで使えない文字列を変換（graphのtitleの中に元のデータは残るはず）
-func validationFileName(s *string) string {
-	res := strings.Replace(*s, " ", "_", -1)
-	return strings.Replace(res, "/", "", -1)
+func printDashboard(cli *datadog.Client, format string) {
+	boards, err := cli.GetDashboards()
+	if err != nil {
+		log.Fatalf("Error getting all dashboards: %s\n", err)
+	}
+
+	switch format {
+	case "json":
+		printDashboardAsJSON(cli, boards)
+	default:
+		log.Fatalf("Error invalid print format: got=%s", format)
+	}
+}
+
+func printDashboardAsJSON(cli *datadog.Client, boards []datadog.DashboardLite) {
+	var out bytes.Buffer
+	for i, board := range boards {
+		dash, err := cli.GetDashboard(board.GetId())
+		if err != nil {
+			log.Fatalf("Error retrieving single dashboard: %s", err)
+		}
+
+		jsc, err := json.MarshalIndent(dash, "", "  ")
+		if err != nil {
+			log.Fatalf("Error unmarshaling responded JSON object: %s\n", err)
+		}
+
+		out.Write(jsc)
+		if i != len(boards)-1 {
+			out.WriteString("\n")
+		}
+	}
+	fmt.Println(out.String())
+}
+
+func exportDashboard(cli *datadog.Client, path, format string) {
+	boards, err := cli.GetDashboards()
+	if err != nil {
+		log.Fatalf("Error retrieving all dashboards: %s\n", err)
+	}
+
+	switch format {
+	case "json":
+		exportDashboardAsJSON(cli, boards, path)
+	default:
+		log.Fatalf("Error invalid export format: got=%s", format)
+	}
+}
+
+func exportDashboardAsJSON(cli *datadog.Client, boards []datadog.DashboardLite, path string) {
+	baseDir := filepath.Join(path, "dashboard")
+	if err := os.Mkdir(baseDir, 0755); err != nil {
+		log.Fatalf("Error creating dashboard datastore directory: %s\n", err)
+	}
+
+	for _, board := range boards {
+		dash, err := cli.GetDashboard(board.GetId())
+		if err != nil {
+			log.Fatalf("Error getting single dashboard: %s", err)
+		}
+
+		jsc, err := json.MarshalIndent(dash, "", "  ")
+		if err != nil {
+			log.Fatalf("Error unmarshaling responded JSON object: %s\n", err)
+		}
+
+		file, err := os.Create(filepath.Join(baseDir, toValidFileName(board.GetTitle())+".json"))
+		if err != nil {
+			log.Fatalf("Error creating json file for dashboard: %s\n", err)
+		}
+		file.Write(jsc)
+		file.Close()
+	}
+}
+
+// toValidFileName converts forbidden characters in UNIX/Linux file name to valid one.
+// Strictly speaking, whitespace is allowed to be used for file name on UNIX/Linux machine but it makes hard to see.
+// The original dashboard title would be remained in the exported data.
+func toValidFileName(s string) string {
+	repl := strings.NewReplacer(" ", "_", "/", "")
+	return repl.Replace(s)
 }
 
 func init() {
