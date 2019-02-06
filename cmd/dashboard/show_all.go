@@ -23,9 +23,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	dd "github.com/tani-yu/dogleash/datadog"
-
 	"github.com/spf13/cobra"
+	dd "github.com/tani-yu/dogleash/datadog"
+	datadog "gopkg.in/zorkian/go-datadog-api.v2"
 )
 
 var outputPath string
@@ -40,57 +40,87 @@ var dashboardShowAllCmd = &cobra.Command{
 			log.Fatalf("fatal: %s\n", err)
 		}
 
-		boards, err := cli.GetDashboards()
-		if err != nil {
-			log.Fatalf("Error getting all dashboards: %s\n", err)
-		}
-
 		if outputPath == "" {
-			var out bytes.Buffer
-			for i, board := range boards {
-				dash, _ := cli.GetDashboard(board.GetId())
-				if err != nil {
-					log.Fatalf("Error getting single dashboard: %s", err)
-				}
-
-				jsc, err := json.MarshalIndent(dash, "", "  ")
-				if err != nil {
-					log.Fatalf("Error unmarshaling responded JSON object: %s\n", err)
-				}
-
-				out.Write(jsc)
-				if i != len(boards)-1 {
-					out.WriteString("\n")
-				}
-			}
-			fmt.Println(out.String())
+			printDashboard(cli, "json")
 			return
 		}
-
-		baseDir := filepath.Join(outputPath, "dashboard")
-		if err := os.Mkdir(baseDir, 0755); err != nil {
-			log.Fatalf("Error creating dashboard datastore directory: %s\n", err)
-		}
-
-		for _, board := range boards {
-			dash, err := cli.GetDashboard(board.GetId())
-			if err != nil {
-				log.Fatalf("Error getting single dashboard: %s", err)
-			}
-
-			jsc, err := json.MarshalIndent(dash, "", "  ")
-			if err != nil {
-				log.Fatalf("Error unmarshaling responded JSON object: %s\n", err)
-			}
-
-			file, err := os.Create(filepath.Join(baseDir, toValidFileName(board.GetTitle())+".json"))
-			if err != nil {
-				log.Fatalf("Error creating json file for dashboard: %s\n", err)
-			}
-			file.Write(jsc)
-			file.Close()
-		}
+		exportDashboard(cli, outputPath, "json")
 	},
+}
+
+func printDashboard(cli *datadog.Client, format string) {
+	boards, err := cli.GetDashboards()
+	if err != nil {
+		log.Fatalf("Error getting all dashboards: %s\n", err)
+	}
+
+	switch format {
+	case "json":
+		printDashboardAsJSON(cli, boards)
+	default:
+		log.Fatalf("Error invalid print format: got=%s", format)
+	}
+}
+
+func printDashboardAsJSON(cli *datadog.Client, boards []datadog.DashboardLite) {
+	var out bytes.Buffer
+	for i, board := range boards {
+		dash, err := cli.GetDashboard(board.GetId())
+		if err != nil {
+			log.Fatalf("Error retrieving single dashboard: %s", err)
+		}
+
+		jsc, err := json.MarshalIndent(dash, "", "  ")
+		if err != nil {
+			log.Fatalf("Error unmarshaling responded JSON object: %s\n", err)
+		}
+
+		out.Write(jsc)
+		if i != len(boards)-1 {
+			out.WriteString("\n")
+		}
+	}
+	fmt.Println(out.String())
+}
+
+func exportDashboard(cli *datadog.Client, path, format string) {
+	boards, err := cli.GetDashboards()
+	if err != nil {
+		log.Fatalf("Error retrieving all dashboards: %s\n", err)
+	}
+
+	switch format {
+	case "json":
+		exportDashboardAsJSON(cli, boards, path)
+	default:
+		log.Fatalf("Error invalid export format: got=%s", format)
+	}
+}
+
+func exportDashboardAsJSON(cli *datadog.Client, boards []datadog.DashboardLite, path string) {
+	baseDir := filepath.Join(path, "dashboard")
+	if err := os.Mkdir(baseDir, 0755); err != nil {
+		log.Fatalf("Error creating dashboard datastore directory: %s\n", err)
+	}
+
+	for _, board := range boards {
+		dash, err := cli.GetDashboard(board.GetId())
+		if err != nil {
+			log.Fatalf("Error getting single dashboard: %s", err)
+		}
+
+		jsc, err := json.MarshalIndent(dash, "", "  ")
+		if err != nil {
+			log.Fatalf("Error unmarshaling responded JSON object: %s\n", err)
+		}
+
+		file, err := os.Create(filepath.Join(baseDir, toValidFileName(board.GetTitle())+".json"))
+		if err != nil {
+			log.Fatalf("Error creating json file for dashboard: %s\n", err)
+		}
+		file.Write(jsc)
+		file.Close()
+	}
 }
 
 // toValidFileName converts forbidden characters in UNIX/Linux file name to valid one.
