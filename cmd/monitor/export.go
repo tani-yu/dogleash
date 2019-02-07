@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var targetDir string
+var outputDir string
 
 // monitorExportCmd represents the monitorExportCmd command
 var monitorExportCmd = &cobra.Command{
@@ -33,7 +33,7 @@ var monitorExportCmd = &cobra.Command{
 			log.Fatalf("Error unmarshaling responded JSON object: %s\n", err)
 		}
 
-		baseDir := filepath.Join(targetDir, "monitor")
+		baseDir := filepath.Join(outputDir, "monitor")
 		if err := os.Mkdir(baseDir, 0755); err != nil {
 			log.Fatalf("Error creating monitor datastore directory: %s\n", err)
 		}
@@ -50,6 +50,6 @@ var monitorExportCmd = &cobra.Command{
 func init() {
 	monitorCmd.AddCommand(monitorExportCmd)
 
-	monitorExportCmd.Flags().StringVarP(&targetDir, "--target-dir", "d", "",
+	monitorExportCmd.Flags().StringVarP(&outputDir, "--output-dir", "d", "",
 		"already existing destination directory (default is current directory)")
 }

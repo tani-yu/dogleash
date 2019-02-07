@@ -12,7 +12,7 @@ import (
 	datadog "gopkg.in/zorkian/go-datadog-api.v2"
 )
 
-var targetDir string
+var outputDir string
 
 // dashboardExportCmd represents the dashboardExportCmd command
 var dashboardExportCmd = &cobra.Command{
@@ -24,7 +24,7 @@ var dashboardExportCmd = &cobra.Command{
 			log.Fatalf("fatal: %s\n", err)
 		}
 
-		exportDashboard(cli, targetDir, "json")
+		exportDashboard(cli, outputDir, "json")
 	},
 }
 
@@ -79,6 +79,6 @@ func toValidFileName(s string) string {
 func init() {
 	dashboardCmd.AddCommand(dashboardExportCmd)
 
-	dashboardExportCmd.Flags().StringVarP(&targetDir, "--target-dir", "d", "",
+	dashboardExportCmd.Flags().StringVarP(&outputDir, "--output-dir", "d", "",
 		"already existing destination directory (default is current directory)")
 }
