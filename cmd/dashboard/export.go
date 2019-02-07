@@ -21,7 +21,7 @@ var dashboardExportCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cli, err := dd.NewDDClient()
 		if err != nil {
-			log.Fatalf("fatal: %s\n", err)
+			log.Fatalf("Failed to connect Datadog API server: %s\n", err)
 		}
 
 		exportDashboard(cli, outputDir, "json")

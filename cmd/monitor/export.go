@@ -20,7 +20,7 @@ var monitorExportCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cli, err := dd.NewDDClient()
 		if err != nil {
-			log.Fatalf("fatal: %s\n", err)
+			log.Fatalf("Failed to connect Datadog API server: %s\n", err)
 		}
 
 		monit, err := cli.GetMonitors()
