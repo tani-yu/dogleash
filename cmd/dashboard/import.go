@@ -18,8 +18,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var imputPath string
-
 // compute_checkCmd represents the compute_check command
 var dashboardImportCmd = &cobra.Command{
 	Use:   "import",
