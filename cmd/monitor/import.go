@@ -24,7 +24,7 @@ import (
 	dd "github.com/tani-yu/dogleash/datadog"
 
 	"github.com/spf13/cobra"
-	"gopkg.in/zorkian/go-datadog-api.v2"
+	datadog "gopkg.in/zorkian/go-datadog-api.v2"
 )
 
 var inputPath string
@@ -36,7 +36,7 @@ var monitorImportCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cli, err := dd.NewDDClient()
 		if err != nil {
-			log.Fatalf("fatal: %s\n", err)
+			log.Fatalf("Failed to connect Datadog API server: %s\n", err)
 		}
 
 		raw, err := ioutil.ReadFile(inputPath)
