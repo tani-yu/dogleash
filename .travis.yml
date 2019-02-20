@@ -11,6 +11,9 @@ git:
 before_script:
   - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.13.2
 install: true
+notifications:
+  slack:
+    secure: LfMLiZMzuVi+gwGss+s1vevupm/WF3exJSDK0uJGJNM1TaQhW5UH0e3aSrMFlltcZFZ6BjAAJ6TwP60Nk8VFQOrGFnxOJMFsiNkJlJZlUA1qihT5PAHPbcbv0X1gdy7H9UzM64bVGFtC2n06reWH4w3YnGIUo4wLzKTlHmPTLnG1KFLEHrGLCvmUBnX16e0uPB+EWKsR2BquESjiyI+/b+tMCuyeWzw6r/1hehSSZSI9WiXNqnULVd+0oof16cCC/kB5R6MON5umnIp9d+xdGnbvJKzowsMzEYD2J1ylntVp8iU12V8i5+HLySEvs1ticVdsvhZfWcJDArABXC6zSfaCDQANcXWqNEB7yLq43inBZAS3IUQlufa/zRUa7IIOfsrognlnZyrznFes0BnHAcBZjIUYM7vIJBTH+2Jhkr42vN9rBkP335D/tWKh6yn7TKta/8qh2reuuiJ+0Sjstnu1E1iS4bjt78C11WnYxd5tdzFOowVAkm5rJiUWjhJ87XhOMY2sYXGoqgoZWWDgnk1dQM3Ojdru1v8RNDYLcAUUXHSv41mIVahqufObL/ta58aH3QPjJP2SLRxKPHjRKIY9mos8qxv91ELVGcgmPc+wXnUZsLoI8N/EQWDFvBdAYnTUm2H0omXwmrDg2p8IoiyntoD7pbx9HT38VLIaKCE=
 jobs:
   include:
     - stage: lint
