@@ -70,7 +70,7 @@ func init() {
 func checkNameAndID(monit datadog.Monitor, cli *datadog.Client) bool {
 	mons, err := cli.GetMonitors()
 	for _, mon := range mons {
-		if *mon.Id == *monit.Id || *mon.Name == *monit.Name {
+		if *mon.Name == *monit.Name && *mon.Id == *monit.Id {
 			return false
 		}
 	}
