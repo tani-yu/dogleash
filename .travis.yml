@@ -13,7 +13,7 @@ jobs:
     - stage: lint
       script:
         - go get -v -t -d ./...
-        - golangci-lint run --config .golangci.yml
+        - ./bin/golangci-lint run --config .golangci.yml
     - stage: test
       script: go test -v -race -cover ./...
     - stage: build
