@@ -75,7 +75,7 @@ func init() {
 // Check if there is the same id and name
 func checkNameAndID(monit datadog.Monitor, mons []datadog.Monitor) bool {
 	for _, mon := range mons {
-		if *mon.Name == *monit.Name || *mon.Id == *monit.Id {
+		if *mon.Name == *monit.Name && *mon.Id == *monit.Id {
 			return false
 		}
 	}
