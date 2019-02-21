@@ -1,5 +1,7 @@
 # DOGLEASH
 
+[![Build Status](https://travis-ci.com/tani-yu/dogleash.svg?token=gx8YmzzZyXuG4grwEWXa&branch=master)](https://travis-ci.com/tani-yu/dogleash)
+
 dogleash is a command line tool to import and export data from [Datadog](https://www.datadoghq.com/).
 
 Maybe other funcion will be added.
