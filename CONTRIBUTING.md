@@ -17,5 +17,6 @@ There are many ways to contribute, from fixing typos, improving the documentatio
 * Develop and test your code changes.
 * Push your changes to your fork of the repository.
 * Submit a pull request. Follow the [Pull Request template](./.github/PULL_REQUEST_TEMPLATE.md).
+* Fight against the build failed messages on Travis CI.
 * The repository maintainers look at Pull Requests on a regular basis, and will respond.
 
