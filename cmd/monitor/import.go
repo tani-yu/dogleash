@@ -32,7 +32,7 @@ var inputPath string
 // compute_checkCmd represents the compute_check command
 var monitorImportCmd = &cobra.Command{
 	Use:   "import",
-	Short: "json形式のファイルを読み込んでdatadogにdashboardを作成します",
+	Short: "Read json format file and create monitor on datadog",
 	Run: func(cmd *cobra.Command, args []string) {
 		cli, err := dd.NewDDClient()
 		if err != nil {
@@ -62,9 +62,8 @@ var monitorImportCmd = &cobra.Command{
 
 func init() {
 	monitorCmd.AddCommand(monitorImportCmd)
-	// directory指定できるように
 	monitorImportCmd.Flags().StringVarP(&inputPath, "input", "i", "",
-		"JSONファイルを指定")
+		"You should JSON File specified")
 }
 
 // Check if there is the same id and name

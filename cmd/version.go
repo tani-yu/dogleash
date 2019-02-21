@@ -1,5 +1,4 @@
-// Copyright © 2017 NAME HERE <EMAIL ADDRESS>
-//
+// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -12,20 +11,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package dashboard
+package cmd
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 )
 
-// compute_checkCmd represents the compute_check command
-var dashboardImportCmd = &cobra.Command{
-	Use:   "import",
-	Short: "Read json format file and create dashboard on datadog",
+const cycloudVersion = "v0.5.1"
+
+// versionCmd represents the version command
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "Print the version number of cycloud command.",
 	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Printf("cycloud 1.0\n")
 	},
 }
 
 func init() {
-	dashboardCmd.AddCommand(dashboardImportCmd)
+	//RootCmd.AddCommand(versionCmd)
 }

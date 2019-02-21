@@ -23,7 +23,7 @@ import (
 // computeCmd represents the compute command
 var dashboardCmd = &cobra.Command{
 	Use:   "dashboard",
-	Short: "DataDog の dashboardに関わる操作を行うコマンドです",
+	Short: "Perform operations related to dashboard of DataDog",
 }
 
 func init() {
