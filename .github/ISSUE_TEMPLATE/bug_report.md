@@ -1,3 +1,8 @@
+**Environment**:
+- **Version of Dogleash (`dogleash version` or git revision):**
+- **OS:**
+
+
 **What steps did you take and what happened:**
 <!-- A clear and concise description of what the bug is. -->
 
