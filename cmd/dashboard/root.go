@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// dashboardCmd represents the dashboard command
+// dashboardCmd represents the dashboardCmd command
 var dashboardCmd = &cobra.Command{
 	Use:   "dashboard",
 	Short: "Perform operations related to dashboard of Datadog",

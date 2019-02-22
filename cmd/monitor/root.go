@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// monitorCmd represents the monitor command
+// monitorCmd represents the monitorCmd command
 var monitorCmd = &cobra.Command{
 	Use:   "monitor",
 	Short: "Perform operations related to monitor of Datadog",

@@ -29,7 +29,7 @@ import (
 
 var inputPath string
 
-// monitorcheckCmd represents the monitor import command
+// monitorcheckCmd represents the monitorcheckCmd command
 var monitorImportCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Create monitors on Datadog",
