@@ -17,7 +17,8 @@ var outputDir string
 // dashboardExportCmd represents the dashboardExportCmd command
 var dashboardExportCmd = &cobra.Command{
 	Use:   "export",
-	Short: "export dashboard info in JSON format to the specified path",
+	Short: "Export dashboards from Datadog",
+	Long:  "Export dashbaords data in JSON format to the specified path",
 	Run: func(cmd *cobra.Command, args []string) {
 		cli, err := dd.NewDDClient()
 		if err != nil {

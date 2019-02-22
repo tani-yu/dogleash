@@ -20,10 +20,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// computeCmd represents the compute command
+// dashboardCmd represents the dashboard command
 var dashboardCmd = &cobra.Command{
 	Use:   "dashboard",
-	Short: "Perform operations related to dashboard of DataDog",
+	Short: "Perform operations related to dashboard of Datadog",
 }
 
 func init() {

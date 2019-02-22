@@ -20,10 +20,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// computeCmd represents the compute command
+// monitorCmd represents the monitor command
 var monitorCmd = &cobra.Command{
 	Use:   "monitor",
-	Short: "Perform operations related to monitor of DataDog",
+	Short: "Perform operations related to monitor of Datadog",
 }
 
 func init() {

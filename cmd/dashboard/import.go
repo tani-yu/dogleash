@@ -18,11 +18,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// compute_checkCmd represents the compute_check command
+//  dashboardImportCmd represents the dashboard import command
 var dashboardImportCmd = &cobra.Command{
 	Use:   "import",
-	Short: "Read json format file and create dashboard on datadog",
+	Short: "Create dashboards on Datadog",
+	Long:  "Create dashbaords on Datadog by importing JSON object",
 	Run: func(cmd *cobra.Command, args []string) {
+		// TODO: After monitor import function created, it will create.
 	},
 }
 

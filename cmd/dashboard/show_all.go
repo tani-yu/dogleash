@@ -14,7 +14,8 @@ import (
 // dashboardShowAllCmd represents the dashboardShowAllCmd command
 var dashboardShowAllCmd = &cobra.Command{
 	Use:   "show_all",
-	Short: "show all dashboard data in JSON format",
+	Short: "Show all dashboards data",
+	Long:  "Show all dashboards data in JSON format",
 	Run: func(cmd *cobra.Command, args []string) {
 		cli, err := dd.NewDDClient()
 		if err != nil {

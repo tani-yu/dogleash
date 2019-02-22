@@ -29,10 +29,11 @@ import (
 
 var inputPath string
 
-// compute_checkCmd represents the compute_check command
+// monitorcheckCmd represents the monitor import command
 var monitorImportCmd = &cobra.Command{
 	Use:   "import",
-	Short: "Read json format file and create monitor on datadog",
+	Short: "Create monitors on Datadog",
+	Long:  "Create monitors on Datadog by importing JSON object",
 	Run: func(cmd *cobra.Command, args []string) {
 		cli, err := dd.NewDDClient()
 		if err != nil {

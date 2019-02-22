@@ -16,7 +16,8 @@ var outputDir string
 // monitorExportCmd represents the monitorExportCmd command
 var monitorExportCmd = &cobra.Command{
 	Use:   "export",
-	Short: "export monitor data in JSON format to the specified path",
+	Short: "Export monitors from Datadog",
+	Long:  "Export monitors data in JSON format to the specified path",
 	Run: func(cmd *cobra.Command, args []string) {
 		cli, err := dd.NewDDClient()
 		if err != nil {
