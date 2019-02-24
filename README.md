@@ -50,3 +50,8 @@ import monitor information from json file.
 ```
 dogleash monitor import -i JSON_FILE_PATH
 ```
+
+## Contributing
+
+See the [contributing guidelines](CONTRIBUTING.md).
+
