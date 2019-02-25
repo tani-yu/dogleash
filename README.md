@@ -1,5 +1,7 @@
 # DOGLEASH
 
+[![Build Status](https://travis-ci.com/tani-yu/dogleash.svg?token=gx8YmzzZyXuG4grwEWXa&branch=master)](https://travis-ci.com/tani-yu/dogleash)
+
 dogleash is a command line tool to import and export data from [Datadog](https://www.datadoghq.com/).
 
 Maybe other funcion will be added.
@@ -46,5 +48,10 @@ dogleash monitor show_all -p /tmp/
 import monitor information from json file.
 
 ```
-dogleash monitor import -i JSON_FILE_PATH
+dogleash monitor import JSON_FILE_PATH
 ```
+
+## Contributing
+
+See the [contributing guidelines](CONTRIBUTING.md).
+
