@@ -46,7 +46,7 @@ brew install bash-completion@2
 
 Follow the "caveats" section of brew's output to add the appropriate bash completion path to your local `~/.bashrc`.
 
-If you have installed dogleash manually, you need add the completion settings to bash completion directory.
+If you have installed DogLeash manually, you need add the completion settings to bash completion directory.
 
 ```bash
 dogleash completion bash > $(brew --prefix)/etc/bash_completion.d/dogleash
