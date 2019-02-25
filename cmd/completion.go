@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -26,8 +27,14 @@ var completionCmd = &cobra.Command{
 	Use:   "completion",
 	Short: "Output shell completion code for the specified shell (bash or zsh)",
 	Run: func(cmd *cobra.Command, args []string) {
+		shells := make([]string, 0)
+		for s := range completionShells {
+			shells = append(shells, s)
+		}
+		supportedShells := strings.Join(shells, ", ")
+
 		if len(args) == 0 {
-			fmt.Fprintln(os.Stderr, "Shell not specified.")
+			fmt.Fprintln(os.Stderr, fmt.Sprintf("Shell type not specified. (Supported: %s)", supportedShells))
 			os.Exit(1)
 		}
 
@@ -38,7 +45,7 @@ var completionCmd = &cobra.Command{
 
 		run, found := completionShells[args[0]]
 		if !found {
-			fmt.Fprintln(os.Stderr, fmt.Sprintf("Unsupported shell type %q.", args[0]))
+			fmt.Fprintln(os.Stderr, fmt.Sprintf("Unsupported shell type %q. (Supported: %s)", args[0], supportedShells))
 			os.Exit(1)
 		}
 
