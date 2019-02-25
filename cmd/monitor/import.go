@@ -24,10 +24,11 @@ import (
 	dd "github.com/tani-yu/dogleash/datadog"
 
 	"github.com/spf13/cobra"
-	"gopkg.in/zorkian/go-datadog-api.v2"
+	datadog "gopkg.in/zorkian/go-datadog-api.v2"
 )
 
-var inputPath string
+//var inputPath string
+var target string
 
 // compute_checkCmd represents the compute_check command
 var monitorImportCmd = &cobra.Command{
@@ -36,29 +37,30 @@ var monitorImportCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cli, err := dd.NewDDClient()
 		if err != nil {
-			log.Fatalf("fatal: %s\n", err)
+			log.Fatalf("Failed to connect Datadog API server: %s\n", err)
 		}
 
-		raw, err := ioutil.ReadFile(inputPath)
-		if err != nil {
-			log.Fatalf("fatal: %s\n", err)
-			os.Exit(1)
+		if len(target) == 0 {
+			fmt.Println("Hello", target)
 		}
 
-		var monits []datadog.Monitor
-		json.Unmarshal(raw, &monits)
+		for _, inputPath := range args {
+			raw, err := ioutil.ReadFile(inputPath)
+			if err != nil {
+				log.Fatalf("fatal: %s\n", err)
+				os.Exit(1)
+			}
 
-		mons, err := cli.GetMonitors()
-		if err != nil {
-			log.Fatalf("fatal: %s\n", err)
-		}
+			var monits []datadog.Monitor
+			json.Unmarshal(raw, &monits)
 
-		for _, monit := range monits {
-			if checkNameAndID(monit, mons) {
-				fmt.Printf("CREATE  ID:%d, NAME:%s\n", *monit.Id, *monit.Name)
-				_, err := cli.CreateMonitor(&monit)
-				if err != nil {
-					log.Fatalf("fatal: %s\n", err)
+			for _, monit := range monits {
+				if checkNameAndID(monit, cli) {
+					fmt.Printf("CREATE  ID:%d, NAME:%s\n", *monit.Id, *monit.Name)
+					_, err := cli.CreateMonitor(&monit)
+					if err != nil {
+						log.Fatalf("fatal: %s\n", err)
+					}
 				}
 			}
 		}
@@ -68,16 +70,19 @@ var monitorImportCmd = &cobra.Command{
 func init() {
 	monitorCmd.AddCommand(monitorImportCmd)
 	// directory指定できるように
-	monitorImportCmd.Flags().StringVarP(&inputPath, "input", "i", "",
-		"JSONファイルを指定")
+	monitorImportCmd.Flags().StringVarP(&target, "target", "t", "world", "")
 }
 
 // Check if there is the same id and name
-func checkNameAndID(monit datadog.Monitor, mons []datadog.Monitor) bool {
+func checkNameAndID(monit datadog.Monitor, cli *datadog.Client) bool {
+	mons, err := cli.GetMonitors()
 	for _, mon := range mons {
-		if *mon.Name == *monit.Name && *mon.Id == *monit.Id {
+		if *mon.Id == *monit.Id || *mon.Name == *monit.Name {
 			return false
 		}
+	}
+	if err != nil {
+		log.Fatalf("fatal: %s\n", err)
 	}
 
 	return true
