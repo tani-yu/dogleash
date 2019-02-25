@@ -27,13 +27,12 @@ import (
 	datadog "gopkg.in/zorkian/go-datadog-api.v2"
 )
 
-//var inputPath string
 var target string
 
 // compute_checkCmd represents the compute_check command
 var monitorImportCmd = &cobra.Command{
 	Use:   "import",
-	Short: "json形式のファイルを読み込んでdatadogにdashboardを作成します",
+	Short: "Read json format file and create monitoring item on datadog",
 	Run: func(cmd *cobra.Command, args []string) {
 		cli, err := dd.NewDDClient()
 		if err != nil {
@@ -69,7 +68,7 @@ var monitorImportCmd = &cobra.Command{
 
 func init() {
 	monitorCmd.AddCommand(monitorImportCmd)
-	// directory指定できるように
+	// Create flags in order to specify the mulitpe files.
 	monitorImportCmd.Flags().StringVarP(&target, "target", "t", "world", "")
 }
 
