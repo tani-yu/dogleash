@@ -25,16 +25,10 @@ var (
 // completionCmd represents the completion command
 var completionCmd = &cobra.Command{
 	Use:   "completion",
-	Short: "Output shell completion code for the specified shell (bash or zsh)",
+	Short: fmt.Sprintf("Output shell completion code for the specified shell (Supported: %s)", supportedShellNames()),
 	Run: func(cmd *cobra.Command, args []string) {
-		shells := make([]string, 0)
-		for s := range completionShells {
-			shells = append(shells, s)
-		}
-		supportedShells := strings.Join(shells, ", ")
-
 		if len(args) == 0 {
-			fmt.Fprintln(os.Stderr, fmt.Sprintf("Shell type not specified. (Supported: %s)", supportedShells))
+			fmt.Fprintln(os.Stderr, fmt.Sprintf("Shell type not specified. (Supported: %s)", supportedShellNames()))
 			os.Exit(1)
 		}
 
@@ -45,7 +39,7 @@ var completionCmd = &cobra.Command{
 
 		run, found := completionShells[args[0]]
 		if !found {
-			fmt.Fprintln(os.Stderr, fmt.Sprintf("Unsupported shell type %q. (Supported: %s)", args[0], supportedShells))
+			fmt.Fprintln(os.Stderr, fmt.Sprintf("Unsupported shell type %q. (Supported: %s)", args[0], supportedShellNames()))
 			os.Exit(1)
 		}
 
@@ -55,6 +49,16 @@ var completionCmd = &cobra.Command{
 		}
 
 	},
+}
+
+// supportedShallNames returns string which contains names of the supported shell by DogLeash.
+// The return value is generated from keys of completionShells map.
+func supportedShellNames() string {
+	shells := make([]string, 0)
+	for s := range completionShells {
+		shells = append(shells, s)
+	}
+	return strings.Join(shells, ", ")
 }
 
 func init() {
