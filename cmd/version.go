@@ -12,13 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package version
+package cmd
 
 import (
 	"fmt"
 	"runtime"
-
-	"github.com/tani-yu/dogleash/cmd"
 
 	"github.com/spf13/cobra"
 )
@@ -34,7 +32,7 @@ var versionCmd = &cobra.Command{
 }
 
 func init() {
-	cmd.RootCmd.AddCommand(versionCmd)
+	RootCmd.AddCommand(versionCmd)
 }
 
 func printVersion(cmd *cobra.Command, args []string) {
