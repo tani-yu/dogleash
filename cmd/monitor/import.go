@@ -27,7 +27,8 @@ import (
 	datadog "gopkg.in/zorkian/go-datadog-api.v2"
 )
 
-var inputPath string
+//var inputPath string
+var target string
 
 // monitorImportCmd represents the monitorImportCmd command
 var monitorImportCmd = &cobra.Command{
@@ -39,21 +40,27 @@ var monitorImportCmd = &cobra.Command{
 			log.Fatalf("Failed to connect Datadog API server: %s\n", err)
 		}
 
-		raw, err := ioutil.ReadFile(inputPath)
-		if err != nil {
-			log.Fatalf("fatal: %s\n", err)
-			os.Exit(1)
+		if len(target) == 0 {
+			fmt.Println("Hello", target)
 		}
 
-		var monits []datadog.Monitor
-		json.Unmarshal(raw, &monits)
+		for _, inputPath := range args {
+			raw, err := ioutil.ReadFile(inputPath)
+			if err != nil {
+				log.Fatalf("fatal: %s\n", err)
+				os.Exit(1)
+			}
 
-		for _, monit := range monits {
-			if checkNameAndID(monit, cli) {
-				fmt.Printf("CREATE  ID:%d, NAME:%s\n", *monit.Id, *monit.Name)
-				_, err := cli.CreateMonitor(&monit)
-				if err != nil {
-					log.Fatalf("fatal: %s\n", err)
+			var monits []datadog.Monitor
+			json.Unmarshal(raw, &monits)
+
+			for _, monit := range monits {
+				if checkNameAndID(monit, cli) {
+					fmt.Printf("CREATE  ID:%d, NAME:%s\n", *monit.Id, *monit.Name)
+					_, err := cli.CreateMonitor(&monit)
+					if err != nil {
+						log.Fatalf("fatal: %s\n", err)
+					}
 				}
 			}
 		}
@@ -62,15 +69,15 @@ var monitorImportCmd = &cobra.Command{
 
 func init() {
 	monitorCmd.AddCommand(monitorImportCmd)
-	monitorImportCmd.Flags().StringVarP(&inputPath, "input", "i", "",
-		"You should JSON File specified")
+    // Create flags in order to specify the mulitpe files.
+	monitorImportCmd.Flags().StringVarP(&target, "target", "t", "world", "")
 }
 
 // Check if there is the same id and name
 func checkNameAndID(monit datadog.Monitor, cli *datadog.Client) bool {
 	mons, err := cli.GetMonitors()
 	for _, mon := range mons {
-		if *mon.Name == *monit.Name && *mon.Id == *monit.Id {
+		if *mon.Id == *monit.Id || *mon.Name == *monit.Name {
 			return false
 		}
 	}
