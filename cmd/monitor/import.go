@@ -29,11 +29,10 @@ import (
 
 var inputPath string
 
-// monitorcheckCmd represents the monitorcheckCmd command
+// monitorImportCmd represents the monitorImportCmd command
 var monitorImportCmd = &cobra.Command{
 	Use:   "import",
-	Short: "Create monitors on Datadog",
-	Long:  "Create monitors on Datadog by importing JSON object",
+	Short: "Create monitors on Datadog by importing JSON object",
 	Run: func(cmd *cobra.Command, args []string) {
 		cli, err := dd.NewDDClient()
 		if err != nil {

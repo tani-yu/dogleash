@@ -13,8 +13,7 @@ import (
 // monitorShowAllCmd represents the monitorShowAllCmd command
 var monitorShowAllCmd = &cobra.Command{
 	Use:   "show_all",
-	Short: "Show all monitors data",
-	Long:  "Show all monitors data in JSON format",
+	Short: "Show all monitors data in JSON format",
 	Run: func(cmd *cobra.Command, args []string) {
 		cli, err := dd.NewDDClient()
 		if err != nil {
