@@ -67,7 +67,7 @@ fi
 
 ## Usage
 
-Get all monitor information at standard output. (json format)
+Get all monitor information at standard output. (JSON format)
 
 ```bash
 dogleash monitor show_all
