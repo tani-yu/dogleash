@@ -86,7 +86,7 @@ dogleash monitor export
 dogleash monitor export -d /tmp/
 ```
 
-Import monitor information from JSON file.
+Import monitor information from JSON file.
 
 ```bash
 dogleash monitor import -i JSON_FILE_PATH
