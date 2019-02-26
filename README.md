@@ -30,6 +30,39 @@ You can skip this step if you already use [dogshell](https://docs.datadoghq.com/
 You can also use environment variables `DATADOG_API_KEY` and `DATADOG_APP_KEY`.
 In this case, the credential read from `.dogrc` file will be overwritten by the environment variables.
 
+### Enabling shell command completions
+
+DogLeash supports shell command completions for Bash and Zsh.
+
+#### On macOS, Using Bash
+
+If you are using macOS and Bash, you need to install `bash-completion` using [Homebrew](https://brew.sh/).
+
+```bash
+## If running Bash 3.2 included with macOS
+brew install bash-completion
+
+## or, if running Bash 4.1+
+brew install bash-completion@2
+```
+
+Follow the "caveats" section of brew's output to add the appropriate bash completion path to your local `~/.bashrc`.
+
+If you have installed DogLeash manually, you need add the completion settings to bash completion directory.
+
+```bash
+dogleash completion bash > $(brew --prefix)/etc/bash_completion.d/dogleash
+```
+
+#### Using Zsh
+
+If you are using Zsh, you can enable autocompletion adding the following codes to `~/.zshrc`.
+
+```zsh
+if [ $commands[dogleash] ]; then
+  source <(dogleash completion zsh)
+fi
+```
 
 ## USAGE
 
