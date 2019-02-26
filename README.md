@@ -73,13 +73,20 @@ get all monitor information at standard output. (json format)
 dogleash monitor show_all
 ```
 
-if you want to save the output result, you should add `-p` and specify a location to path.
+display all monitor information in JSON format.
 
 ```bash
-dogleash monitor show_all -p /tmp/
+dogleash monitor show_all
 ```
 
-import monitor information from json file.
+export all monitor information in JSON format File. if you want to specify path, you can use `d` option.
+
+```bash
+dogleash monitor export
+dogleash monitor export -d /tmp/
+```
+
+import monitor information from JSON file.
 
 ```bash
 dogleash monitor import -i JSON_FILE_PATH
