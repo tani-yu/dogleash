@@ -44,23 +44,30 @@ var monitorImportCmd = &cobra.Command{
 			fmt.Println("Hello", target)
 		}
 
+		var monits []datadog.Monitor
 		for _, inputPath := range args {
+			var decoded []datadog.Monitor
 			raw, err := ioutil.ReadFile(inputPath)
 			if err != nil {
 				log.Fatalf("fatal: %s\n", err)
 				os.Exit(1)
 			}
 
-			var monits []datadog.Monitor
-			json.Unmarshal(raw, &monits)
+			if err := json.Unmarshal(raw, &decoded); err != nil {
+				fmt.Println("JSON Unmarshal error:", err)
+				return
+			}
 
-			for _, monit := range monits {
-				if checkNameAndID(monit, cli) {
-					fmt.Printf("CREATE  ID:%d, NAME:%s\n", *monit.Id, *monit.Name)
-					_, err := cli.CreateMonitor(&monit)
-					if err != nil {
-						log.Fatalf("fatal: %s\n", err)
-					}
+			monits = append(monits, decoded...)
+		}
+		pp.Println(monits)
+
+		for _, monit := range monits {
+			if checkNameAndID(monit, cli) {
+				fmt.Printf("CREATE  ID:%d, NAME:%s\n", *monit.Id, *monit.Name)
+				_, err := cli.CreateMonitor(&monit)
+				if err != nil {
+					log.Fatalf("fatal: %s\n", err)
 				}
 			}
 		}
@@ -69,7 +76,7 @@ var monitorImportCmd = &cobra.Command{
 
 func init() {
 	monitorCmd.AddCommand(monitorImportCmd)
-    // Create flags in order to specify the mulitpe files.
+	// Create flags in order to specify the mulitpe files.
 	monitorImportCmd.Flags().StringVarP(&target, "target", "t", "world", "")
 }
 
@@ -77,7 +84,7 @@ func init() {
 func checkNameAndID(monit datadog.Monitor, cli *datadog.Client) bool {
 	mons, err := cli.GetMonitors()
 	for _, mon := range mons {
-		if *mon.Id == *monit.Id || *mon.Name == *monit.Name {
+		if *mon.Name == *monit.Name || *mon.Id == *monit.Id {
 			return false
 		}
 	}
