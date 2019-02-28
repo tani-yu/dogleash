@@ -57,13 +57,17 @@ var monitorImportCmd = &cobra.Command{
 				fmt.Println("JSON Unmarshal error:", err)
 				return
 			}
-
 			monits = append(monits, decoded...)
+
 		}
-		pp.Println(monits)
+
+		mons, err := cli.GetMonitors()
+		if err != nil {
+			log.Fatalf("fatal: %s\n", err)
+		}
 
 		for _, monit := range monits {
-			if checkNameAndID(monit, cli) {
+			if checkNameAndID(monit, mons) {
 				fmt.Printf("CREATE  ID:%d, NAME:%s\n", *monit.Id, *monit.Name)
 				_, err := cli.CreateMonitor(&monit)
 				if err != nil {
@@ -81,16 +85,11 @@ func init() {
 }
 
 // Check if there is the same id and name
-func checkNameAndID(monit datadog.Monitor, cli *datadog.Client) bool {
-	mons, err := cli.GetMonitors()
+func checkNameAndID(monit datadog.Monitor, mons []datadog.Monitor) bool {
 	for _, mon := range mons {
 		if *mon.Name == *monit.Name || *mon.Id == *monit.Id {
 			return false
 		}
 	}
-	if err != nil {
-		log.Fatalf("fatal: %s\n", err)
-	}
-
 	return true
 }
