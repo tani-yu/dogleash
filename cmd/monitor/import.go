@@ -51,7 +51,6 @@ var monitorImportCmd = &cobra.Command{
 
 			if err := json.Unmarshal(raw, &decoded); err != nil {
 				log.Fatalf("JSON Unmarshal error:", err)
-				return
 			}
 			monits = append(monits, decoded...)
 
