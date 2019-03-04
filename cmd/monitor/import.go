@@ -40,10 +40,6 @@ var monitorImportCmd = &cobra.Command{
 			log.Fatalf("Failed to connect Datadog API server: %s\n", err)
 		}
 
-		if len(target) == 0 {
-			fmt.Println("Hello", target)
-		}
-
 		var monits []datadog.Monitor
 		for _, inputPath := range args {
 			var decoded []datadog.Monitor
@@ -54,7 +50,7 @@ var monitorImportCmd = &cobra.Command{
 			}
 
 			if err := json.Unmarshal(raw, &decoded); err != nil {
-				fmt.Println("JSON Unmarshal error:", err)
+				log.Fatalf("JSON Unmarshal error:", err)
 				return
 			}
 			monits = append(monits, decoded...)
