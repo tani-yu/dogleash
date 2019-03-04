@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
 
 	dd "github.com/tani-yu/dogleash/datadog"
 
