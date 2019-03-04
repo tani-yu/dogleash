@@ -1,3 +1,9 @@
+---
+name: Bug report
+about: Create a report to help us improve
+
+---
+
 **Environment**:
 - **Version of Dogleash (`dogleash version` or git revision):**
 - **OS:**
