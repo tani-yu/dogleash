@@ -50,10 +50,9 @@ var monitorImportCmd = &cobra.Command{
 			}
 
 			if err := json.Unmarshal(raw, &decoded); err != nil {
-				log.Fatalf("JSON Unmarshal error:", err)
+				log.Fatalf("JSON Unmarshal error: %s\n", err)
 			}
 			monits = append(monits, decoded...)
-
 		}
 
 		mons, err := cli.GetMonitors()
