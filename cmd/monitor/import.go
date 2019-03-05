@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
 
 	dd "github.com/tani-yu/dogleash/datadog"
 
@@ -43,7 +42,6 @@ var monitorImportCmd = &cobra.Command{
 			raw, err := ioutil.ReadFile(inputPath)
 			if err != nil {
 				log.Fatalf("fatal: %s\n", err)
-				os.Exit(1)
 			}
 
 			if err := json.Unmarshal(raw, &decoded); err != nil {
