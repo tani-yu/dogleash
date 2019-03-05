@@ -27,9 +27,6 @@ import (
 	datadog "gopkg.in/zorkian/go-datadog-api.v2"
 )
 
-//var inputPath string
-var target string
-
 // monitorImportCmd represents the monitorImportCmd command
 var monitorImportCmd = &cobra.Command{
 	Use:   "import",
@@ -74,8 +71,6 @@ var monitorImportCmd = &cobra.Command{
 
 func init() {
 	monitorCmd.AddCommand(monitorImportCmd)
-	// Create flags in order to specify the mulitpe files.
-	monitorImportCmd.Flags().StringVarP(&target, "target", "t", "world", "")
 }
 
 // Check if there is the same id and name
