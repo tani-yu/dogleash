@@ -33,7 +33,7 @@ var monitorImportCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cli, err := dd.NewDDClient()
 		if err != nil {
-			log.Fatalf("Failed to connect Datadog API server: %s\n", err)
+			log.Fatalf("failed to connect Datadog API server: %s\n", err)
 		}
 
 		var monits []datadog.Monitor
@@ -41,7 +41,7 @@ var monitorImportCmd = &cobra.Command{
 			var decoded []datadog.Monitor
 			raw, err := ioutil.ReadFile(inputPath)
 			if err != nil {
-				log.Fatalf("fatal: %s\n", err)
+				log.Fatalf("failed to read JSON file: %s\n", err)
 			}
 
 			if err := json.Unmarshal(raw, &decoded); err != nil {
@@ -52,7 +52,7 @@ var monitorImportCmd = &cobra.Command{
 
 		mons, err := cli.GetMonitors()
 		if err != nil {
-			log.Fatalf("fatal: %s\n", err)
+			log.Fatalf("failed to get monitoring items: %s\n", err)
 		}
 
 		for _, monit := range monits {
@@ -60,7 +60,7 @@ var monitorImportCmd = &cobra.Command{
 				fmt.Printf("CREATE  ID:%d, NAME:%s\n", *monit.Id, *monit.Name)
 				_, err := cli.CreateMonitor(&monit)
 				if err != nil {
-					log.Fatalf("fatal: %s\n", err)
+					log.Fatalf("failed to create monitoring items: %s\n", err)
 				}
 			}
 		}
