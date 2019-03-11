@@ -1,0 +1,29 @@
+before:
+  hooks:
+  - go mod download
+builds:
+  - binary: dogleash
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+changelog:
+  filters:
+    exclude:
+      - .github
+      - Merge pull request
+      - Merge branch
+archive:
+  format: tar.gz
+  name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+  files:
+    - README.md
+  replacements:
+    darwin: Darwin
+    linux: Linux
+    amd64: x86_64
+release:
+  github:
+    owner: tani-yu
+    name: dogleash
