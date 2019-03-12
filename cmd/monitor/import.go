@@ -26,8 +26,6 @@ import (
 	datadog "gopkg.in/zorkian/go-datadog-api.v2"
 )
 
-var inputPath string
-
 // monitorImportCmd represents the monitorImportCmd command
 var monitorImportCmd = &cobra.Command{
 	Use:   "import",
@@ -35,23 +33,34 @@ var monitorImportCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cli, err := dd.NewDDClient()
 		if err != nil {
-			log.Fatalf("Failed to connect Datadog API server: %s\n", err)
-		}
-
-		raw, err := ioutil.ReadFile(inputPath)
-		if err != nil {
-			log.Fatalf("fatal: %s\n", err)
+			log.Fatalf("failed to connect Datadog API server: %s\n", err)
 		}
 
 		var monits []datadog.Monitor
-		json.Unmarshal(raw, &monits)
+		for _, inputPath := range args {
+			var decoded []datadog.Monitor
+			raw, err := ioutil.ReadFile(inputPath)
+			if err != nil {
+				log.Fatalf("failed to read JSON file: %s\n", err)
+			}
+
+			if err := json.Unmarshal(raw, &decoded); err != nil {
+				log.Fatalf("JSON Unmarshal error: %s\n", err)
+			}
+			monits = append(monits, decoded...)
+		}
+
+		mons, err := cli.GetMonitors()
+		if err != nil {
+			log.Fatalf("failed to get monitoring items: %s\n", err)
+		}
 
 		for _, monit := range monits {
-			if checkNameAndID(monit, cli) {
+			if checkNameAndID(monit, mons) {
 				fmt.Printf("CREATE  ID:%d, NAME:%s\n", *monit.Id, *monit.Name)
 				_, err := cli.CreateMonitor(&monit)
 				if err != nil {
-					log.Fatalf("fatal: %s\n", err)
+					log.Fatalf("failed to create monitoring items: %s\n", err)
 				}
 			}
 		}
@@ -60,21 +69,14 @@ var monitorImportCmd = &cobra.Command{
 
 func init() {
 	monitorCmd.AddCommand(monitorImportCmd)
-	monitorImportCmd.Flags().StringVarP(&inputPath, "input", "i", "",
-		"You should JSON File specified")
 }
 
 // Check if there is the same id and name
-func checkNameAndID(monit datadog.Monitor, cli *datadog.Client) bool {
-	mons, err := cli.GetMonitors()
+func checkNameAndID(monit datadog.Monitor, mons []datadog.Monitor) bool {
 	for _, mon := range mons {
-		if *mon.Id == *monit.Id || *mon.Name == *monit.Name {
+		if *mon.Name == *monit.Name || *mon.Id == *monit.Id {
 			return false
 		}
 	}
-	if err != nil {
-		log.Fatalf("fatal: %s\n", err)
-	}
-
 	return true
 }
