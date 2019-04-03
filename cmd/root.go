@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"bufio"
 
-	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/spf13/cobra"
 	"gopkg.in/ini.v1"
 )
 
@@ -32,22 +33,51 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
-	// Here you will define your flags and configuration settings.
-	// Cobra supports Persistent Flags, which, if defined here,
-	// will be global for your application.
-	RootCmd.PersistentFlags().StringVar(&dogrcFile, "config", filepath.Join(os.Getenv("HOME"), ".dogrc"), ".dogrc file path")
 }
 
-// initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	// Check args
+	if len(os.Args) == 1 {
+		return
+	} else if len(os.Args) != 2 {
+		switch os.Args[1] {
+			case "config":
+				return
+			case "help":
+				return
+			default:
+				initConfigDDKey()
+		}
+	}
+}
+
+func initConfigDDKey() {
 	// Check if a file exists
+	dogrcFile = filepath.Join(os.Getenv("HOME"), ".dogrc.d/current")
 	_, err := os.Stat(dogrcFile)
-	if err == nil {
+	if err != nil {
+		fmt.Println("Usage: dogleash config help")
+		os.Exit(1)
+	} else {
 		// read file from dogrcFile
+		file, err := os.Open(dogrcFile)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: fail to read .dogrc.d/current\n%v\n", err)
+			os.Exit(1)
+		}
+		defer file.Close()
+
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			dogrcFile = filepath.Join(os.Getenv("HOME"), ".dogrc.d/", scanner.Text())
+		}
+		if err := scanner.Err(); err != nil {
+			fmt.Fprintf(os.Stderr, "Error: fail to read .dogrc.d/%s\n%v\n", scanner.Text(), err)
+			os.Exit(1)
+		}
 		dogrc, err := ini.Load(dogrcFile)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: fail to read .dogrc file\n%v", err)
+			fmt.Fprintf(os.Stderr, "Error: fail to read .dogrc file\n%v\n", err)
 			os.Exit(1)
 		}
 
