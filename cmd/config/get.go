@@ -1,16 +1,16 @@
 package config
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
-	"bufio"
 
 	"github.com/spf13/cobra"
 )
 
 var configGetCmd = &cobra.Command{
-	Use: "get",
+	Use:   "get",
 	Short: "Get Config Organization for API/APP keys",
 	Run: func(cmd *cobra.Command, args []string) {
 		dogrcFile = filepath.Join(os.Getenv("HOME"), ".dogrc.d/current")

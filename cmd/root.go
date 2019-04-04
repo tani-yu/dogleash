@@ -1,13 +1,13 @@
 package cmd
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
-	"bufio"
 
-	"github.com/spf13/viper"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"gopkg.in/ini.v1"
 )
 
@@ -41,12 +41,12 @@ func initConfig() {
 		return
 	} else if len(os.Args) != 2 {
 		switch os.Args[1] {
-			case "config":
-				return
-			case "help":
-				return
-			default:
-				initConfigDDKey()
+		case "config":
+			return
+		case "help":
+			return
+		default:
+			initConfigDDKey()
 		}
 	}
 }

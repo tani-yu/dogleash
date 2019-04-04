@@ -9,7 +9,7 @@ import (
 )
 
 var configSetCmd = &cobra.Command{
-	Use: "set",
+	Use:   "set",
 	Short: "Set Config Organization for API/APP keys",
 	Run: func(cmd *cobra.Command, args []string) {
 		var file *os.File
