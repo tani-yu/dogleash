@@ -49,13 +49,12 @@ var configSetCmd = &cobra.Command{
 					if dogrcExist {
 						// dogrc exist: update
 						UpdateCurrent(args[0])
-						return
 					} else {
 						// dogrc not exist: error
 						log.Fatalf("\ndoes not exist %s\n", dogrcFile)
 					}
+					return
 				}
-
 			}
 			// others: choose a config
 			ChooseConfig()
@@ -66,6 +65,7 @@ var configSetCmd = &cobra.Command{
 	},
 }
 
+// UpdateCurrent set current config
 func UpdateCurrent(arg string) {
 	viper.Set("current", arg)
 	err := viper.WriteConfigAs(dogleashFile)
@@ -74,6 +74,7 @@ func UpdateCurrent(arg string) {
 	}
 }
 
+// ChooseConfig make user to choose config from list
 func ChooseConfig() {
 	// list configs
 	od := viper.Get("organizations")
