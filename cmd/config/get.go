@@ -1,29 +1,22 @@
 package config
 
 import (
-	"bufio"
 	"fmt"
-	"os"
-	"path/filepath"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var configGetCmd = &cobra.Command{
 	Use:   "get",
-	Short: "Get Config Organization for API/APP keys",
+	Short: "Get a Config name is set",
 	Run: func(cmd *cobra.Command, args []string) {
-		dogrcFile = filepath.Join(os.Getenv("HOME"), ".dogrc.d/current")
-		file, err := os.Open(dogrcFile)
+		viper.SetConfigFile(dogleashFile)
+		err := viper.ReadInConfig()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "%v\n", err)
-			os.Exit(1)
+			panic(fmt.Errorf("Fatal error config file: %s", err))
 		}
-		defer file.Close()
-		scanner := bufio.NewScanner(file)
-		for scanner.Scan() {
-			fmt.Println(scanner.Text())
-		}
+		fmt.Println(viper.GetString("current"))
 	},
 }
 

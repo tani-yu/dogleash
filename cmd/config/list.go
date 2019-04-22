@@ -2,27 +2,31 @@ package config
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
-	"path/filepath"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var configListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list Organization configs",
+	Short: "list configs",
 	Run: func(cmd *cobra.Command, args []string) {
-		files, err := ioutil.ReadDir(filepath.Join(os.Getenv("HOME"), ".dogrc.d"))
+		// read config
+		viper.SetConfigFile(dogleashFile)
+		err := viper.ReadInConfig()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "%v\n", err)
-			os.Exit(1)
+			panic(fmt.Errorf("Fatal error config file: %s", err))
 		}
-		for _, f := range files {
-			if f.Name() == "current" {
-				continue
-			}
-			fmt.Println(f.Name())
+		// print configs
+		od := viper.Get("organizations")
+		for i := 0; i < len(od.([]interface{})); i++ {
+			fmt.Printf("%s\t", od.([]interface{})[i].(map[interface{}]interface{})["name"])
+		}
+		if _, err = os.Stat(dogrcFile); err != nil {
+			fmt.Println()
+		} else {
+			fmt.Println("dogrc")
 		}
 	},
 }

@@ -1,11 +1,15 @@
 package config
 
 import (
+	"os"
+	"path/filepath"
+
 	"github.com/spf13/cobra"
 	"github.com/tani-yu/dogleash/cmd"
 )
 
-var dogrcFile string
+var dogrcFile = filepath.Join(os.Getenv("HOME"), ".dogrc")
+var dogleashFile = filepath.Join(os.Getenv("HOME"), ".config/dogleash/config.yml")
 
 var configCmd = &cobra.Command{
 	Use:   "config",
