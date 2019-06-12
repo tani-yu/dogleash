@@ -8,6 +8,23 @@ import (
 	"github.com/tani-yu/dogleash/cmd"
 )
 
+// dogleash config current and orgs
+type DogleashConfig struct {
+	Organizations []Organization
+	Current       string `mapstructure:"current"`
+}
+
+// orgs
+type Organization struct {
+	Name   string `mapstructure:"name"`
+	APIKey string `mapstructure:"apikey"`
+	APPKey string `mapstructure:"appkey"`
+}
+
+// dogleash map-struct
+var DC DogleashConfig
+
+// config path
 var dogrcFile = filepath.Join(os.Getenv("HOME"), ".dogrc")
 var dogleashFile = filepath.Join(os.Getenv("HOME"), ".config/dogleash/config.yml")
 

@@ -11,6 +11,23 @@ import (
 	"gopkg.in/ini.v1"
 )
 
+// dogleash config current and orgs
+type DogleashConfig struct {
+	Organizations []Organization
+	Current       string `mapstructure:"current"`
+}
+
+// orgs
+type Organization struct {
+	Name   string `mapstructure:"name"`
+	APIKey string `mapstructure:"apikey"`
+	APPKey string `mapstructure:"appkey"`
+}
+
+// dogleash map-struct
+var DC DogleashConfig
+
+// config path
 var dogrcFile = filepath.Join(os.Getenv("HOME"), ".dogrc")
 var dogleashFile = filepath.Join(os.Getenv("HOME"), ".config/dogleash/config.yml")
 
@@ -77,9 +94,12 @@ func initConfigDDKey() {
 			panic(fmt.Errorf("Fatal error config file: %s", err))
 		}
 
-		cs := viper.Get("current")
-		od := viper.Get("organizations")
-		if cs == "dogrc" {
+		err = viper.Unmarshal(&DC)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if DC.Current == "dogrc" {
 			if dogrcExist {
 				dogrc, err := ini.Load(dogrcFile)
 				if err != nil {
@@ -91,10 +111,10 @@ func initConfigDDKey() {
 				log.Fatal("\ncurrent config is dogrc. but does not exist ~/.dogrc")
 			}
 		} else {
-			for i := 0; i < len(od.([]interface{})); i++ {
-				if od.([]interface{})[i].(map[interface{}]interface{})["name"] == cs {
-					viper.SetDefault("api_key", od.([]interface{})[i].(map[interface{}]interface{})["keys"].(map[interface{}]interface{})["apikey"])
-					viper.SetDefault("app_key", od.([]interface{})[i].(map[interface{}]interface{})["keys"].(map[interface{}]interface{})["appkey"])
+			for _, o := range DC.Organizations {
+				if o.Name == DC.Current {
+					viper.SetDefault("api_key", o.APIKey)
+					viper.SetDefault("app_key", o.APPKey)
 				}
 			}
 		}

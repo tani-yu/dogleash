@@ -31,7 +31,10 @@ var configSetCmd = &cobra.Command{
 			dogrcExist = true
 		}
 
-		od := viper.Get("organizations")
+		err = viper.Unmarshal(&DC)
+		if err != nil {
+			log.Fatal(err)
+		}
 		if len(args) == 1 {
 			// check configs
 			/*
@@ -40,8 +43,8 @@ var configSetCmd = &cobra.Command{
 					* dogrc not exist: error
 				* others: choose a config
 			*/
-			for i := 0; i < len(od.([]interface{})); i++ {
-				if args[0] == od.([]interface{})[i].(map[interface{}]interface{})["name"] {
+			for _, o := range DC.Organizations {
+				if args[0] == o.Name {
 					// config exist: update
 					UpdateCurrent(args[0])
 					return
@@ -77,15 +80,17 @@ func UpdateCurrent(arg string) {
 // ChooseConfig make user to choose config from list
 func ChooseConfig() {
 	// list configs
-	od := viper.Get("organizations")
-	lenod := len(od.([]interface{}))
+	err := viper.Unmarshal(&DC)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	fmt.Println("Choose a Config name")
-	for i := 0; i < lenod; i++ {
-		fmt.Printf("[%d] %s\n", i, od.([]interface{})[i].(map[interface{}]interface{})["name"])
+	for i, o := range DC.Organizations {
+		fmt.Printf("[%d] %s\n", i, o.Name)
 	}
 	if _, err := os.Stat(dogrcFile); err == nil {
-		fmt.Printf("[%d] dogrc\n", lenod)
+		fmt.Printf("[%d] dogrc\n", len(DC.Organizations))
 	}
 
 	// wait user input
@@ -98,9 +103,13 @@ func ChooseConfig() {
 	}
 
 	// update current
-	if n < lenod {
-		UpdateCurrent(od.([]interface{})[n].(map[interface{}]interface{})["name"].(string))
-	} else if n == lenod {
+	if n < len(DC.Organizations) {
+		for i, o := range DC.Organizations {
+			if i == n {
+				UpdateCurrent(o.Name)
+			}
+		}
+	} else if n == len(DC.Organizations) {
 		UpdateCurrent("dogrc")
 	} else {
 		log.Fatal("\nChoose valid number.\n")
