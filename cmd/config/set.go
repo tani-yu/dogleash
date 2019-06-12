@@ -14,13 +14,13 @@ import (
 
 var configSetCmd = &cobra.Command{
 	Use:   "set",
-	Short: "Set a Config for API/APP keys",
+	Short: "Set API/APP keys per organization",
 	Run: func(cmd *cobra.Command, args []string) {
 		// read config
 		viper.SetConfigFile(dogleashFile)
 		err := viper.ReadInConfig()
 		if err != nil {
-			panic(fmt.Errorf("Fatal error config file: %s", err))
+			log.Fatal(err)
 		}
 
 		var dogrcExist bool
@@ -73,7 +73,7 @@ func UpdateCurrent(arg string) {
 	viper.Set("current", arg)
 	err := viper.WriteConfigAs(dogleashFile)
 	if err != nil {
-		panic(fmt.Errorf("Fatal error config file: %s", err))
+		log.Fatal(err)
 	}
 }
 

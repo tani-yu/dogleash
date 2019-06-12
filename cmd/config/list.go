@@ -11,13 +11,13 @@ import (
 
 var configListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list configs",
+	Short: "show list of all config names",
 	Run: func(cmd *cobra.Command, args []string) {
 		// read config
 		viper.SetConfigFile(dogleashFile)
 		err := viper.ReadInConfig()
 		if err != nil {
-			panic(fmt.Errorf("Fatal error config file: %s", err))
+			log.Fatal(err)
 		}
 
 		err = viper.Unmarshal(&DC)
@@ -27,11 +27,9 @@ var configListCmd = &cobra.Command{
 
 		// print configs
 		for _, o := range DC.Organizations {
-			fmt.Printf("%s\t", o.Name)
+			fmt.Println(o.Name)
 		}
-		if _, err = os.Stat(dogrcFile); err != nil {
-			fmt.Println()
-		} else {
+		if _, err = os.Stat(dogrcFile); err == nil {
 			fmt.Println("dogrc")
 		}
 	},

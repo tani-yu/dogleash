@@ -17,7 +17,7 @@ var dogleashFile = filepath.Join(os.Getenv("HOME"), ".config/dogleash/config.yml
 
 var configCmd = &cobra.Command{
 	Use:   "config",
-	Short: "Perform operations related to config of Datadog API/APP keys",
+	Short: "Manage config files of Datadog API/APP keys",
 }
 
 func init() {

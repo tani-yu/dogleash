@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -9,12 +10,12 @@ import (
 
 var configGetCmd = &cobra.Command{
 	Use:   "get",
-	Short: "Get a Config name is set",
+	Short: "current config name",
 	Run: func(cmd *cobra.Command, args []string) {
 		viper.SetConfigFile(dogleashFile)
 		err := viper.ReadInConfig()
 		if err != nil {
-			panic(fmt.Errorf("Fatal error config file: %s", err))
+			log.Fatal(err)
 		}
 		fmt.Println(viper.GetString("current"))
 	},

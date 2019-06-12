@@ -91,7 +91,7 @@ func initConfigDDKey() {
 		viper.SetConfigFile(dogleashFile)
 		err := viper.ReadInConfig()
 		if err != nil {
-			panic(fmt.Errorf("Fatal error config file: %s", err))
+			log.Fatal(err)
 		}
 
 		err = viper.Unmarshal(&DC)
