@@ -21,7 +21,7 @@ type Organization struct {
 	APPKey string `mapstructure:"appkey"`
 }
 
-// dogleash map-struct
+// DC dogleash config
 var DC DogleashConfig
 
 // config path
