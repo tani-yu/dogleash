@@ -26,6 +26,19 @@ apikey = YOUR_API_KEY
 appkey = YOUR_APP_KEY
 ```
 
+Or, Create a dogleash config `~/.config/dogleash/config.yml`. Example:
+
+```yaml
+current: dogrc
+organizations:
+- apikey: hoge
+  appkey: hogehoge
+  name: hoge
+- apikey: fuga
+  appkey: fugafuga
+  name: fuga
+```
+
 You can skip this step if you already use [dogshell](https://docs.datadoghq.com/developers/faq/dogshell-quickly-use-datadog-s-api-from-terminal-shell/) and have `~/.dogrc` file.
 
 You can also use environment variables `DATADOG_API_KEY` and `DATADOG_APP_KEY`.

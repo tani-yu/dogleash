@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -10,7 +11,25 @@ import (
 	"gopkg.in/ini.v1"
 )
 
-var dogrcFile string
+// dogleash config current and orgs
+type DogleashConfig struct {
+	Organizations []Organization
+	Current       string `mapstructure:"current"`
+}
+
+// orgs
+type Organization struct {
+	Name   string `mapstructure:"name"`
+	APIKey string `mapstructure:"apikey"`
+	APPKey string `mapstructure:"appkey"`
+}
+
+// DC dogleash config
+var DC DogleashConfig
+
+// config path
+var dogrcFile = filepath.Join(os.Getenv("HOME"), ".dogrc")
+var dogleashFile = filepath.Join(os.Getenv("HOME"), ".config/dogleash/config.yml")
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -32,27 +51,75 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
-	// Here you will define your flags and configuration settings.
-	// Cobra supports Persistent Flags, which, if defined here,
-	// will be global for your application.
-	RootCmd.PersistentFlags().StringVar(&dogrcFile, "config", filepath.Join(os.Getenv("HOME"), ".dogrc"), ".dogrc file path")
 }
 
-// initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	// Check if a file exists
+	// Check args
+	if len(os.Args) == 1 {
+		return
+	} else if len(os.Args) != 2 {
+		switch os.Args[1] {
+		case "config":
+			return
+		case "help":
+			return
+		default:
+			initConfigDDKey()
+		}
+	}
+}
+
+func initConfigDDKey() {
+	// check file exist
+	var dogrcExist bool
 	_, err := os.Stat(dogrcFile)
-	if err == nil {
-		// read file from dogrcFile
-		dogrc, err := ini.Load(dogrcFile)
+	if err != nil {
+		dogrcExist = false
+	} else {
+		dogrcExist = true
+	}
+	var dogleashExist bool
+	_, err = os.Stat(dogleashFile)
+	if err != nil {
+		dogleashExist = false
+	} else {
+		dogleashExist = true
+	}
+
+	// set config api/app keys
+	if dogleashExist {
+		viper.SetConfigFile(dogleashFile)
+		err := viper.ReadInConfig()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: fail to read .dogrc file\n%v", err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 
-		viper.SetDefault("api_key", dogrc.Section("Connection").Key("apikey").String())
-		viper.SetDefault("app_key", dogrc.Section("Connection").Key("appkey").String())
+		err = viper.Unmarshal(&DC)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if DC.Current == "dogrc" {
+			if dogrcExist {
+				dogrc, err := ini.Load(dogrcFile)
+				if err != nil {
+					log.Fatal(err)
+				}
+				viper.SetDefault("api_key", dogrc.Section("Connection").Key("apikey").String())
+				viper.SetDefault("app_key", dogrc.Section("Connection").Key("appkey").String())
+			} else {
+				log.Fatal("\ncurrent config is dogrc. but does not exist ~/.dogrc")
+			}
+		} else {
+			for _, o := range DC.Organizations {
+				if o.Name == DC.Current {
+					viper.SetDefault("api_key", o.APIKey)
+					viper.SetDefault("app_key", o.APPKey)
+				}
+			}
+		}
+	} else {
+		log.Fatalf("\ndoes not exist dogleash configfile. [%s]\n", dogleashFile)
 	}
 
 	// read in environment variables that match
