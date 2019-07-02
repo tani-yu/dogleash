@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package browser
+package synthetics
 
 import (
 	"encoding/json"
@@ -26,8 +26,8 @@ import (
 	datadog "gopkg.in/zorkian/go-datadog-api.v2"
 )
 
-// browserImportCmd represents the browserImportCmd command
-var browserImportCmd = &cobra.Command{
+// syntheticsImportCmd represents the syntheticsImportCmd command
+var syntheticsImportCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Create synthetics on Datadog by importing JSON object",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -52,15 +52,16 @@ var browserImportCmd = &cobra.Command{
 
 		syns, err := cli.GetSyntheticsTests()
 		if err != nil {
-			log.Fatalf("failed to get monitoring items: %s\n", err)
+			log.Fatalf("failed to get synthetics items: %s\n", err)
 		}
 
 		for _, synthetic := range synthetics {
 			if checkNameAndID(synthetic, syns) {
-				fmt.Printf("CREATE  ID:%d, NAME:%s\n", *synthetic.MonitorId, *synthetic.Name)
+				disallowUnexpectedProperties(&synthetic)
+				fmt.Printf("CREATE NAME:%s\n", *synthetic.Name)
 				_, err := cli.CreateSyntheticsTest(&synthetic)
 				if err != nil {
-					log.Fatalf("failed to create monitoring items: %s\n", err)
+					log.Fatalf("failed to create synthetics items: %s\n", err)
 				}
 			}
 		}
@@ -68,15 +69,28 @@ var browserImportCmd = &cobra.Command{
 }
 
 func init() {
-	browserCmd.AddCommand(browserImportCmd)
+	SyntheticsCmd.AddCommand(syntheticsImportCmd)
 }
 
 // Check if there is the same id and name
 func checkNameAndID(synthetic datadog.SyntheticsTest, syns []datadog.SyntheticsTest) bool {
 	for _, syn := range syns {
-		if *syn.Name == *synthetic.Name || *syn.MonitorId == *synthetic.MonitorId {
+		if *syn.Name == *synthetic.Name {
 			return false
 		}
 	}
 	return true
+}
+
+// disallowUnexpectedProperties sets nil in properites.
+// properties below are not allowed by Datadog API:
+//     PublicId
+//     MonitorId
+//     CreatedAt
+//     ModifiedAt
+func disallowUnexpectedProperties(synthetic *datadog.SyntheticsTest) {
+	synthetic.PublicId = nil
+	synthetic.MonitorId = nil
+	synthetic.CreatedAt = nil
+	synthetic.ModifiedAt = nil
 }

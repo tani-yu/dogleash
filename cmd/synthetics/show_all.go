@@ -1,4 +1,4 @@
-package browser
+package synthetics
 
 import (
 	"encoding/json"
@@ -10,8 +10,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// browserShowAllCmd represents the browserShowAllCmd command
-var browserShowAllCmd = &cobra.Command{
+// syntheticsShowAllCmd represents the syntheticsShowAllCmd command
+var syntheticsShowAllCmd = &cobra.Command{
 	Use:   "show_all",
 	Short: "Show all synthetics data in JSON format",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -35,5 +35,5 @@ var browserShowAllCmd = &cobra.Command{
 }
 
 func init() {
-	browserCmd.AddCommand(browserShowAllCmd)
+	SyntheticsCmd.AddCommand(syntheticsShowAllCmd)
 }
