@@ -21,13 +21,13 @@ import (
 )
 
 // syntheticCmd represents the syntheticsCmd
-var SyntheticsCmd = &cobra.Command{
+var syntheticsCmd = &cobra.Command{
 	Use:   "synthetics",
 	Short: "Perform operations related to synthetics of Datadog",
 }
 
 func init() {
-	cmd.RootCmd.AddCommand(SyntheticsCmd)
+	cmd.RootCmd.AddCommand(syntheticsCmd)
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

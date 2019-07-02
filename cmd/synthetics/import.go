@@ -69,7 +69,7 @@ var syntheticsImportCmd = &cobra.Command{
 }
 
 func init() {
-	SyntheticsCmd.AddCommand(syntheticsImportCmd)
+	syntheticsCmd.AddCommand(syntheticsImportCmd)
 }
 
 // Check if there is the same id and name
@@ -82,7 +82,7 @@ func checkNameAndID(synthetic datadog.SyntheticsTest, syns []datadog.SyntheticsT
 	return true
 }
 
-// disallowUnexpectedProperties sets nil in properites.
+// disallowUnexpectedProperties sets nil in properties.
 // properties below are not allowed by Datadog API:
 //     PublicId
 //     MonitorId

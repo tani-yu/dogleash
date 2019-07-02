@@ -48,7 +48,7 @@ var syntheticsExportCmd = &cobra.Command{
 }
 
 func init() {
-	SyntheticsCmd.AddCommand(syntheticsExportCmd)
+	syntheticsCmd.AddCommand(syntheticsExportCmd)
 
 	syntheticsExportCmd.Flags().StringVarP(&outputDir, "--output-dir", "d", "",
 		"already existing destination directory (default is current directory)")

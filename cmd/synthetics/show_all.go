@@ -35,5 +35,5 @@ var syntheticsShowAllCmd = &cobra.Command{
 }
 
 func init() {
-	SyntheticsCmd.AddCommand(syntheticsShowAllCmd)
+	syntheticsCmd.AddCommand(syntheticsShowAllCmd)
 }
