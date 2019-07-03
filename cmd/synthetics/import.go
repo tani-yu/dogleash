@@ -75,7 +75,7 @@ func init() {
 // Check if there is the same id and name
 func checkNameAndID(synthetic datadog.SyntheticsTest, syns []datadog.SyntheticsTest) bool {
 	for _, syn := range syns {
-		if *syn.Name == *synthetic.Name {
+		if *syn.Name == *synthetic.Name || *syn.MonitorId == *synthetic.MonitorId {
 			return false
 		}
 	}
