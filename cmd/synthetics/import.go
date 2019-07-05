@@ -1,16 +1,8 @@
-// Copyright © 2017 NAME HERE <EMAIL ADDRESS>
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// See Copyright Notice in LICENSE
 //
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
 package synthetics
 
@@ -33,7 +25,7 @@ var syntheticsImportCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cli, err := dd.NewDDClient()
 		if err != nil {
-			log.Fatalf("failed to connect Datadog API server: %s\n", err)
+			log.Fatalf("Failed to connect Datadog API server: %s\n", err)
 		}
 
 		var synthetics []datadog.SyntheticsTest
@@ -41,7 +33,7 @@ var syntheticsImportCmd = &cobra.Command{
 			var decoded []datadog.SyntheticsTest
 			raw, err := ioutil.ReadFile(inputPath)
 			if err != nil {
-				log.Fatalf("failed to read JSON file: %s\n", err)
+				log.Fatalf("Failed to read JSON file: %s\n", err)
 			}
 
 			if err := json.Unmarshal(raw, &decoded); err != nil {
@@ -52,7 +44,7 @@ var syntheticsImportCmd = &cobra.Command{
 
 		syns, err := cli.GetSyntheticsTests()
 		if err != nil {
-			log.Fatalf("failed to get synthetics items: %s\n", err)
+			log.Fatalf("Failed to get synthetics items: %s\n", err)
 		}
 
 		for _, synthetic := range synthetics {
@@ -61,7 +53,7 @@ var syntheticsImportCmd = &cobra.Command{
 				fmt.Printf("CREATE NAME:%s\n", *synthetic.Name)
 				_, err := cli.CreateSyntheticsTest(&synthetic)
 				if err != nil {
-					log.Fatalf("failed to create synthetics items: %s\n", err)
+					log.Fatalf("Failed to create synthetics items: %s\n", err)
 				}
 			}
 		}
