@@ -74,7 +74,7 @@ func checkNameAndID(synthetic datadog.SyntheticsTest, syns []datadog.SyntheticsT
 	return true
 }
 
-// maskUnsupportedProperties sets nil in unsuported properites.
+// maskUnsupportedProperties sets nil in unsuported properties.
 // properties below are not allowed by Datadog API:
 //     PublicId
 //     MonitorId
