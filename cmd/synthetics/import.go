@@ -49,7 +49,7 @@ var syntheticsImportCmd = &cobra.Command{
 
 		for _, synthetic := range synthetics {
 			if checkNameAndID(synthetic, syns) {
-				disallowUnexpectedProperties(&synthetic)
+				maskUnsupportedProperties(&synthetic)
 				fmt.Printf("CREATE NAME:%s\n", *synthetic.Name)
 				_, err := cli.CreateSyntheticsTest(&synthetic)
 				if err != nil {
@@ -74,13 +74,13 @@ func checkNameAndID(synthetic datadog.SyntheticsTest, syns []datadog.SyntheticsT
 	return true
 }
 
-// disallowUnexpectedProperties sets nil in properties.
+// maskUnsupportedProperties sets nil in unsuported properites.
 // properties below are not allowed by Datadog API:
 //     PublicId
 //     MonitorId
 //     CreatedAt
 //     ModifiedAt
-func disallowUnexpectedProperties(synthetic *datadog.SyntheticsTest) {
+func maskUnsupportedProperties(synthetic *datadog.SyntheticsTest) {
 	synthetic.PublicId = nil
 	synthetic.MonitorId = nil
 	synthetic.CreatedAt = nil
