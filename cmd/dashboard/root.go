@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -18,11 +19,6 @@ import (
 	"github.com/tani-yu/dogleash/cmd"
 	datadog "gopkg.in/zorkian/go-datadog-api.v2"
 )
-
-// MyDashboards widget form dashboard struct
-type MyDashboards struct {
-	MyDashboards []datadog.Board `json:"dashboards,omitempty"`
-}
 
 // dashboardCmd represents the dashboardCmd command
 var dashboardCmd = &cobra.Command{
@@ -32,14 +28,21 @@ var dashboardCmd = &cobra.Command{
 
 // getJSONDataFromAPI **WORKAROUND** get JSON from dashboard api
 func getJSONDataFromAPI(path string) []byte {
-	baseurl := "https://api.datadoghq.com/api/v1/"
-	param := "?api_key=" + viper.GetString("api_key") + "&application_key=" + viper.GetString("app_key")
 
-	url := baseurl + path + param
+	u, err := url.Parse("https://api.datadoghq.com/api/v1/" + path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	q := u.Query()
+	q.Set("api_key", viper.GetString("api_key"))
+	q.Set("application_key", viper.GetString("app_key"))
+	u.RawQuery = q.Encode()
+
 	var netClient = &http.Client{
 		Timeout: time.Second * 10,
 	}
-	resp, err := netClient.Get(url)
+	resp, err := netClient.Get(u.String())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -57,15 +60,13 @@ func getJSONDataFromAPI(path string) []byte {
 func GetAllDashboards() []datadog.Board {
 	jd := getJSONDataFromAPI("dashboard")
 
-	var boards MyDashboards
+	var boards map[string][]datadog.Board
 	err := json.Unmarshal([]byte(jd), &boards)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return boards.MyDashboards
-
-	// err := cli.doJsonRequest("GET", "/v1/dashboard/", nil, &boards)
+	return boards["dashboards"]
 }
 
 func init() {
