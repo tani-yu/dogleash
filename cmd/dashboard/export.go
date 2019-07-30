@@ -1,3 +1,9 @@
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+//
+// See Copyright Notice in LICENSE
+//
+
 package dashboard
 
 import (
@@ -29,10 +35,7 @@ var dashboardExportCmd = &cobra.Command{
 }
 
 func exportDashboard(cli *datadog.Client, path, format string) {
-	boards, err := cli.GetDashboards()
-	if err != nil {
-		log.Fatalf("Error retrieving all dashboards: %s\n", err)
-	}
+	boards := GetAllDashboards()
 
 	switch format {
 	case "json":
@@ -42,14 +45,14 @@ func exportDashboard(cli *datadog.Client, path, format string) {
 	}
 }
 
-func exportDashboardAsJSON(cli *datadog.Client, boards []datadog.DashboardLite, path string) {
+func exportDashboardAsJSON(cli *datadog.Client, boards []datadog.Board, path string) {
 	baseDir := filepath.Join(path, "dashboard")
 	if err := os.Mkdir(baseDir, 0755); err != nil {
 		log.Fatalf("Error creating dashboard datastore directory: %s\n", err)
 	}
 
 	for _, board := range boards {
-		dash, err := cli.GetDashboard(board.GetId())
+		dash, err := cli.GetBoard(*board.Id)
 		if err != nil {
 			log.Fatalf("Error getting single dashboard: %s", err)
 		}
@@ -59,7 +62,7 @@ func exportDashboardAsJSON(cli *datadog.Client, boards []datadog.DashboardLite, 
 			log.Fatalf("Error unmarshaling responded JSON object: %s\n", err)
 		}
 
-		file, err := os.Create(filepath.Join(baseDir, toValidFileName(board.GetTitle())+".json"))
+		file, err := os.Create(filepath.Join(baseDir, toValidFileName(*dash.Title+".json")))
 		if err != nil {
 			log.Fatalf("Error creating json file for dashboard: %s\n", err)
 		}
