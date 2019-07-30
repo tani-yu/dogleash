@@ -74,7 +74,7 @@ func initConfig() {
 func initConfigDDKey() {
 	_, err := os.Stat(dogleashFile)
 	if err != nil {
-		log.Fatalf("\ndoes not exist dogleash configfile. [%s]\n", dogleashFile)
+		log.Fatalf("\nDogleash config file does not exist. [%s]\n", dogleashFile)
 	}
 
 	viper.SetConfigFile(dogleashFile)
@@ -91,7 +91,7 @@ func initConfigDDKey() {
 	if DC.Current == "dogrc" {
 		_, err := os.Stat(dogrcFile)
 		if err != nil {
-			log.Fatal("\ncurrent config is dogrc. but does not exist ~/.dogrc")
+			log.Fatal("\nCurrent config is set as \"dogrc\", but ~/.dogrc does not exist.")
 		}
 
 		dogrc, err := ini.Load(dogrcFile)
