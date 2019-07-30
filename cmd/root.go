@@ -57,60 +57,57 @@ func initConfig() {
 	// Check args
 	if len(os.Args) == 1 {
 		return
-	} else if len(os.Args) != 2 {
+	}
+
+	if len(os.Args) == 2 {
 		switch os.Args[1] {
 		case "config":
 			return
 		case "help":
 			return
-		default:
-			initConfigDDKey()
 		}
 	}
+
+	initConfigDDKey()
 }
 
 func initConfigDDKey() {
-	// check file exist
-	_, err := os.Stat(dogrcFile)
-	dogrcExist := (err == nil)
-
-	_, err = os.Stat(dogleashFile)
-	dogleashExist := (err == nil)
-
-	// set config api/app keys
-	if dogleashExist {
-		viper.SetConfigFile(dogleashFile)
-		err := viper.ReadInConfig()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		err = viper.Unmarshal(&DC)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		if DC.Current == "dogrc" {
-			if dogrcExist {
-				dogrc, err := ini.Load(dogrcFile)
-				if err != nil {
-					log.Fatal(err)
-				}
-				viper.SetDefault("api_key", dogrc.Section("Connection").Key("apikey").String())
-				viper.SetDefault("app_key", dogrc.Section("Connection").Key("appkey").String())
-			} else {
-				log.Fatal("\ncurrent config is dogrc. but does not exist ~/.dogrc")
-			}
-		} else {
-			for _, o := range DC.Organizations {
-				if o.Name == DC.Current {
-					viper.SetDefault("api_key", o.APIKey)
-					viper.SetDefault("app_key", o.APPKey)
-				}
-			}
-		}
-	} else {
+	_, err := os.Stat(dogleashFile)
+	if err != nil {
 		log.Fatalf("\ndoes not exist dogleash configfile. [%s]\n", dogleashFile)
+	}
+
+	viper.SetConfigFile(dogleashFile)
+	err = viper.ReadInConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = viper.Unmarshal(&DC)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if DC.Current == "dogrc" {
+		_, err := os.Stat(dogrcFile)
+		if err != nil {
+			log.Fatal("\ncurrent config is dogrc. but does not exist ~/.dogrc")
+		}
+
+		dogrc, err := ini.Load(dogrcFile)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		viper.SetDefault("api_key", dogrc.Section("Connection").Key("apikey").String())
+		viper.SetDefault("app_key", dogrc.Section("Connection").Key("appkey").String())
+	} else {
+		for _, o := range DC.Organizations {
+			if o.Name == DC.Current {
+				viper.SetDefault("api_key", o.APIKey)
+				viper.SetDefault("app_key", o.APPKey)
+			}
+		}
 	}
 
 	// read in environment variables that match
