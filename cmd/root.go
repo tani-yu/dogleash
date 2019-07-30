@@ -71,20 +71,11 @@ func initConfig() {
 
 func initConfigDDKey() {
 	// check file exist
-	var dogrcExist bool
 	_, err := os.Stat(dogrcFile)
-	if err != nil {
-		dogrcExist = false
-	} else {
-		dogrcExist = true
-	}
-	var dogleashExist bool
+	dogrcExist := (err == nil)
+
 	_, err = os.Stat(dogleashFile)
-	if err != nil {
-		dogleashExist = false
-	} else {
-		dogleashExist = true
-	}
+	dogleashExist := (err == nil)
 
 	// set config api/app keys
 	if dogleashExist {
