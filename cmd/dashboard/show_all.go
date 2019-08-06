@@ -1,3 +1,9 @@
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+//
+// See Copyright Notice in LICENSE
+//
+
 package dashboard
 
 import (
@@ -26,10 +32,7 @@ var dashboardShowAllCmd = &cobra.Command{
 }
 
 func printDashboard(cli *datadog.Client, format string) {
-	boards, err := cli.GetDashboards()
-	if err != nil {
-		log.Fatalf("Error getting all dashboards: %s\n", err)
-	}
+	boards := GetAllDashboards()
 
 	switch format {
 	case "json":
@@ -39,10 +42,10 @@ func printDashboard(cli *datadog.Client, format string) {
 	}
 }
 
-func printDashboardAsJSON(cli *datadog.Client, boards []datadog.DashboardLite) {
+func printDashboardAsJSON(cli *datadog.Client, boards []datadog.Board) {
 	var out bytes.Buffer
 	for i, board := range boards {
-		dash, err := cli.GetDashboard(board.GetId())
+		dash, err := cli.GetBoard(*board.Id)
 		if err != nil {
 			log.Fatalf("Error retrieving single dashboard: %s", err)
 		}

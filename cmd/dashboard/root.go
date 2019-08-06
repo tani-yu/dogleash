@@ -1,29 +1,72 @@
-// Copyright © 2017 NAME HERE <EMAIL ADDRESS>
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// See Copyright Notice in LICENSE
 //
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
 package dashboard
 
 import (
-	"github.com/tani-yu/dogleash/cmd"
+	"encoding/json"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"net/url"
+	"time"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/tani-yu/dogleash/cmd"
+	datadog "gopkg.in/zorkian/go-datadog-api.v2"
 )
 
 // dashboardCmd represents the dashboardCmd command
 var dashboardCmd = &cobra.Command{
 	Use:   "dashboard",
 	Short: "Perform operations related to dashboard of Datadog",
+}
+
+// getJSONDataFromAPI **WORKAROUND** get JSON from dashboard api
+func getJSONDataFromAPI(path string) []byte {
+
+	u, err := url.Parse("https://api.datadoghq.com/api/v1/" + path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	q := u.Query()
+	q.Set("api_key", viper.GetString("api_key"))
+	q.Set("application_key", viper.GetString("app_key"))
+	u.RawQuery = q.Encode()
+
+	var netClient = &http.Client{
+		Timeout: time.Second * 10,
+	}
+	resp, err := netClient.Get(u.String())
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+
+	jd, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return jd
+}
+
+// GetAllDashboards **WORKAROUND** get all dashboard with widget form
+func GetAllDashboards() []datadog.Board {
+	jd := getJSONDataFromAPI("dashboard")
+
+	var boards map[string][]datadog.Board
+	err := json.Unmarshal([]byte(jd), &boards)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return boards["dashboards"]
 }
 
 func init() {
