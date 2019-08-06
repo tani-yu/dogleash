@@ -27,6 +27,9 @@ var downtimeCancelCmd = &cobra.Command{
 		}
 
 		downtimes, err := cli.GetDowntimes()
+		if err != nil {
+			log.Fatalf("Error getting all downtimes: %s\n", err)
+		}
 		for _, id := range args {
 			i, err := strconv.Atoi(id)
 			if err != nil {
