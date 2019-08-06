@@ -62,7 +62,7 @@ func init() {
 	dashboardCmd.AddCommand(dashboardImportCmd)
 }
 
-// Check if there is the same id and name
+// Check if there is the same id
 func checkID(bo datadog.Board, boards []datadog.Board) bool {
 	for _, board := range boards {
 		if *board.Id == *bo.Id {
