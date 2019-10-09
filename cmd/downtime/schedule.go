@@ -48,7 +48,15 @@ var downtimeScheduleCmd = &cobra.Command{
 		}
 
 		for _, dt := range dts {
-			if checkID(dt, downtimes) {
+			if dt.Id != nil {
+				if hasDowntimeID(downtimes, *dt.Id) {
+					out, err := cli.CreateDowntime(&dt)
+					if err != nil {
+						log.Fatalf("failed to create downtime items: %s\n", err)
+					}
+					fmt.Printf("CREATE ID: %d\n", *out.Id)
+				}
+			} else {
 				out, err := cli.CreateDowntime(&dt)
 				if err != nil {
 					log.Fatalf("failed to create downtime items: %s\n", err)
@@ -61,16 +69,4 @@ var downtimeScheduleCmd = &cobra.Command{
 
 func init() {
 	downtimeCmd.AddCommand(downtimeScheduleCmd)
-}
-
-// Check if there is the same id
-func checkID(dt datadog.Downtime, downtimes []datadog.Downtime) bool {
-	if dt.Id != nil {
-		for _, downtime := range downtimes {
-			if *downtime.Id == *dt.Id {
-				return false
-			}
-		}
-	}
-	return true
 }

@@ -33,9 +33,9 @@ var downtimeCancelCmd = &cobra.Command{
 		for _, id := range args {
 			i, err := strconv.Atoi(id)
 			if err != nil {
-				log.Fatalf("internale error.\n%s\n", err)
+				log.Fatalf("invalid downtime id, got=%s: %s\n", id, err)
 			}
-			if searchID(i, downtimes) {
+			if hasDowntimeID(downtimes, i) {
 				err := cli.DeleteDowntime(i)
 				if err != nil {
 					log.Fatalf("Failed to cancel a downtime. ID :%d\n%s\n", i, err)
@@ -49,8 +49,8 @@ func init() {
 	downtimeCmd.AddCommand(downtimeCancelCmd)
 }
 
-// Check if there is the same id
-func searchID(id int, downtimes []datadog.Downtime) bool {
+// Search scheduled downtime ids that contain same ids specified at argument.
+func hasDowntimeID(downtimes []datadog.Downtime, id int) bool {
 	for _, downtime := range downtimes {
 		if *downtime.Id == id {
 			return true
