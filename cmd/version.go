@@ -22,7 +22,7 @@ import (
 )
 
 // Version represents the current version of DogLeash CLI tool
-const Version = "0.1.0"
+const Version = "0.2.0"
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
